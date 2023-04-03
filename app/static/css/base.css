@@ -1,3 +1,4 @@
+
 a.navbar-option {
     font-family: "Montserrat";
     font-style:normal;
@@ -18,6 +19,7 @@ a.navbar-option {
     align-items: center;
     justify-content: space-between;
     text-align: center;
+    margin-bottom: 40px;
   }
   
   .left, .right {
@@ -108,7 +110,12 @@ a.navbar-option {
     background-color: red;
   }
 
-  .left img {
-    width: 80px;
-    padding: 2%;
+  .left {
+    height: 100%;
+    text-align: left;
+  }
+
+  #logoImg {
+    height: 100%;
+    object-fit: fill;
   }
