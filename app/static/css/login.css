@@ -1,0 +1,26 @@
+.card {
+    width: 50%;
+
+    font-family: "Montserrat";
+    font-style:normal;
+}
+
+.card-header {
+    color: white;
+    font-size: large;
+    background-color: #FFB42D
+}
+
+#signInBtn {
+    background-color: #FF9FAA;
+    border-color: #FF9FAA;
+}
+
+#signInBtn:hover {
+    background-color: #c67c85;
+    border-color: #c67c85;
+}
+
+.card-footer {
+    border-top: none;
+}
