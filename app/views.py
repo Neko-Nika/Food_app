@@ -8,6 +8,9 @@ def index(request):
     return HttpResponse("MAIN WINDOW")
 
 def quickstart(request):
+    if request.user.is_authenticated:
+        return redirect('default')
+
     return render(request, "quickstart.html")
 
 def register(request):

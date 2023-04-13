@@ -9,6 +9,44 @@ from app.models import *
 
 
 @csrf_exempt
+def login_account(request):
+    if request.method == "POST" and request.content_type == 'application/json':
+        data = json.loads(request.body)
+        
+        password = data['password']
+        username = data['username']
+
+        try:
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                login(request, user)
+            else:
+                raise Exception("Invalid email or password")
+        except Exception as exc:
+            response_data = {
+                'success': False,
+                'message': str(exc)
+            }
+
+            return JsonResponse(response_data) 
+
+        response_data = {
+            'success': True,
+            'message': 'User signed in successfully'
+        }
+
+        return JsonResponse(response_data)
+    else:
+
+        response_data = {
+            'success': False,
+            'message': 'Only POST requests are allowed'
+        }
+        
+        return JsonResponse(response_data, status=405)
+
+
+@csrf_exempt
 def create_account(request):
     if request.method == "POST" and request.content_type == 'application/json':
         data = json.loads(request.body)

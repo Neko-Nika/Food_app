@@ -10,13 +10,25 @@
     <div class="card mx-auto" >
         <div class="card-header">Login in to your account</div>
         <div class="card-body">
-            
+            <form id="login_account" method="post">
+                {% csrf_token %}
+                  <div class="mb-3">
+                    <label for="usernameInput" class="form-label">Username</label>
+                    <input type="text" class="form-control" id="usernameInput" name="username" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="passwordInput" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="passwordInput" name="password" required>
+                  </div>
+                  <div class="card-footer">
+                    <button type="button" class="btn btn-primary" form="login_account" id="signInBtn">Sign In</button>
+                    <a href="/register" class="btn btn-outline-secondary" id="toRegisterBtn">Don't have an account?</a>
+                  </div>
+            </form>
         </div>
-        <div class="card-footer">
-            <a href="#" class="btn btn-primary" id="signInBtn">Sign In</a>
-            <a href="/register" class="btn btn-outline-secondary" id="toRegisterBtn">Don't have an account?</a>
         </div>
-      </div>
+
+        <div class="alert alert-danger mx-auto" role="alert" id="error" hidden></div>
 
 </div>
 
