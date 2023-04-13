@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/register.css' %}">
+<script src="{% static 'js/register.js' %}"></script>
+
+<div class="container">
+    
+    <div class="card mx-auto" >
+        <div class="card-header">Create new account</div>
+        <div class="card-body">
+            <form id="create_account" method="post">
+                {% csrf_token %}
+                  <div class="mb-3">
+                    <label for="usernameInput" class="form-label">Username</label>
+                    <input type="text" class="form-control" id="usernameInput" name="username" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="firstnameInput" class="form-label">First Name</label>
+                    <input type="text" class="form-control" id="firstnameInput" name="firstname" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="lastnameInput" class="form-label">Last Name</label>
+                    <input type="text" class="form-control" id="lastnameInput" name="lastname" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="emailInput" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="emailInput" name="email" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="passwordInput" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="passwordInput" name="password" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="repeatpasswordInput" class="form-label">Repeat Password</label>
+                    <input type="password" class="form-control" id="repeatpasswordInput" name="repeatpassword" required>
+                  </div>
+                  <div class="card-footer">
+                    <button type="button" class="btn btn-primary" form="create_camera" id="signUpBtn">Sign Up</button>
+                    <a href="/login" class="btn btn-outline-secondary" id="toLoginBtn">Already have an account?</a>
+                  </div>
+            </form>
+        </div>
+        </div>
+
+        <div class="alert alert-danger mx-auto" role="alert" id="error" hidden></div>
+</div>
+
+
+{% endblock content %}
