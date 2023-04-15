@@ -1,11 +1,12 @@
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout
 
 
 @login_required(login_url="/quickstart")
 def index(request):
-    return HttpResponse("MAIN WINDOW")
+    return redirect('recipes')
 
 def quickstart(request):
     if request.user.is_authenticated:
@@ -19,3 +20,14 @@ def register(request):
 def login(request):
     return render(request, "login.html")
 
+@login_required(login_url="/login")
+def signout(request):
+    logout(request)
+    return redirect("quickstart")
+
+def recipes(request):
+    return render(request, "recipes.html")
+
+@login_required
+def create_recipe(request):
+    return render(request, "create_recipe.html")

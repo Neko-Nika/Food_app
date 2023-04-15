@@ -21,19 +21,24 @@
         <img src="{% static 'images/logo.svg' %}" id="logoImg">
       </div>
       <ul class="center">
-        <li><a class="navbar-option" href="/quickstart">Quick start</a></li>
-        <li><a class="navbar-option" href="#">Recipes</a></li>
+        {% if request.user.is_authenticated %}
+        <li><a class="navbar-option" href="/recipes">Recipes</a></li>
         <li><a class="navbar-option" href="#">Contact us</a></li>
+        {% else %}
+        <li><a class="navbar-option" href="/quickstart">Quick start</a></li>
+        <li><a class="navbar-option" href="/recipes">Recipes</a></li>
+        <li><a class="navbar-option" href="#">Contact us</a></li>
+        {% endif %}
       </ul>
       <div class="right">
         <div class="dropdown">
           <a href="" class="btn dropdown-toggle navbar-option" data-bs-toggle="dropdown" aria-expanded="false" role="button" id="dropdownMenuButton1"><i class="fa-solid fa-user"></i>Profile</a>
           <ul class="dropdown-menu dropdown-menu-lg-end dropdown-menu-light" aria-labelledby="dropdownMenuButton1">
-            {% if request.user.is_authentificated %}
+            {% if request.user.is_authenticated %}
             <li><a class="dropdown-item" href="#"><i class="fa-solid fa-circle-info"></i>Information</a></li>
             <li><a class="dropdown-item" href="#"><i class="fa-solid fa-gear"></i>Settings</a></li>
             <li><hr class="dropdown-divider"></li>
-            <li class="logout"><a class="dropdown-item" href="#"><i class="fa-solid fa-right-from-bracket"></i>Log out</a></li>
+            <li class="logout"><a class="dropdown-item" href="/logout"><i class="fa-solid fa-right-from-bracket"></i>Log out</a></li>
             {% else %}
             <li><a class="dropdown-item" href="/login"><i class="fa-solid fa-right-to-bracket"></i>Sign In</a></li>
             <li><hr class="dropdown-divider"></li>

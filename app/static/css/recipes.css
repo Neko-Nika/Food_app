@@ -1,0 +1,17 @@
+.upper {
+    width:50%;
+    margin: 0 auto;
+
+    font-family: "Montserrat";
+    font-style:normal;
+}
+
+.add-btn {
+    background-color: #FF9FAA;
+    border-color: #FF9FAA;
+    border: none;
+}
+
+.add-btn:hover {
+    background-color: #c67c85;
+}
