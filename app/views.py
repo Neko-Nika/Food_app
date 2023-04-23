@@ -3,6 +3,8 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 
+from app.models import Product
+
 
 @login_required(login_url="/quickstart")
 def index(request):
@@ -30,4 +32,7 @@ def recipes(request):
 
 @login_required
 def create_recipe(request):
-    return render(request, "create_recipe.html")
+    context = {
+        'products': Product.objects.all()
+    }
+    return render(request, "create_recipe.html", context)

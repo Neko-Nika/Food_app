@@ -1,8 +1,9 @@
-.card, #error {
-    width: 50%;
+.card {
+    width: 60%;
 }
 
 #error {
+    width: 100%;
     margin-top: 20px;
 }
 
@@ -23,6 +24,12 @@
     border-top: none;
 }
 
+.card {
+    font-family: "Montserrat";
+    font-style:normal;
+    margin-bottom: 200px;
+}
+
 #doneBtn {
     background-color: #FF9FAA;
     border-color: #FF9FAA;
@@ -31,4 +38,23 @@
 #doneBtn:hover {
     background-color: #c67c85;
     border-color: #c67c85;
+}
+
+img {
+    max-width: 400px;
+    max-height: 400px;
+
+    object-fit: contain;
+}
+
+.col-sm > label {
+    font-size: small;
+}
+
+.product-info {
+    text-align: center;
+}
+
+.collapse-btn {
+    width: 100%;
 }
