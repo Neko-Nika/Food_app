@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/recipe.css' %}">
+<script src="{% static 'js/recipe.js' %}"></script>
+
+<div class="container">
+    
+    <h1>{{ recipe.title }}</h1>
+
+</div>
+
+
+{% endblock content %}

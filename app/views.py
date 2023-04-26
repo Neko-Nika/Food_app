@@ -39,3 +39,10 @@ def create_recipe(request):
         'products': Product.objects.all()
     }
     return render(request, "create_recipe.html", context)
+
+
+def recipe(request, id):
+    context = {
+        "recipe": Recipe.objects.get(id=id)
+    }
+    return render(request, "recipe.html", context)
