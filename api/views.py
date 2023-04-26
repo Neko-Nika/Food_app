@@ -97,9 +97,8 @@ def create_account(request):
 @csrf_exempt
 @login_required
 def create_new_recipe(request):
-    if request.method == "POST" and request.content_type == 'application/json':
-        data = json.loads(request.body)
-
+    if request.method == "POST":
+        data = request.POST
         try:
             title = data["title"]
             total_proteins = float(data["total_proteins"])
@@ -110,18 +109,20 @@ def create_new_recipe(request):
             products = []
             amounts = []
             for pr in [x for x in data.keys() if x.startswith("product_")]:
-                products.append(Product.objects.get(name=data[pr]['product']))
-                amounts.append(data[pr]['amount'])
+                products.append(Product.objects.get(name=data[pr]))
+                amounts.append(data['amount_' + pr])
             
             steps = []
             for st in [x for x in data.keys() if x.startswith("step_")]:
-                step = Step.objects.create(step=data[st]['name'], description=data[st]['description'])
+                step = Step.objects.create(step=data[st], description=data['description_' + st])
                 step.save()
                 steps.append(step)
 
             recipe = Recipe.objects.create(author=request.user, title=title, total_proteins=total_proteins,
                                            total_fats=total_fats, total_carbohydrates=total_carbohydrates, total_calories=total_calories,
                                            amounts=amounts)
+            if 'image' in request.FILES:
+                recipe.image = request.FILES['image']
             recipe.save()
             recipe.products.add(*products)
             recipe.steps.add(*steps)

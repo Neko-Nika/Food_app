@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 
-from app.models import Product
+from app.models import *
 
 
 @login_required(login_url="/quickstart")
@@ -28,7 +28,10 @@ def signout(request):
     return redirect("quickstart")
 
 def recipes(request):
-    return render(request, "recipes.html")
+    context = {
+        'recipes': Recipe.objects.all()
+    }
+    return render(request, "recipes.html", context)
 
 @login_required
 def create_recipe(request):

@@ -37,10 +37,10 @@
                   </div>
                   <div class="mb-4">
                     <label for="imgInput" class="form-label">Recipe image</label>
-                    <input class="form-control" type="file" id="imgInput" accept="image/*">
+                    <input class="form-control" type="file" onchange="showPreview(this)" id="imgInput" accept="image/*">
                   </div>
-                  <div class="mb-4" hidden>
-                    <img src="{% static 'images/no-photo.png' %}" class="rounded mx-auto d-block" id="previewImg" alt="No image">
+                  <div class="mb-4" id="previewContainer" hidden>
+                    <img src="{% static 'images/no-photo.png' %}" data-original="{% static 'images/no-photo.png' %}" class="rounded mx-auto d-block" id="previewImg" alt="No image">
                   </div>
                   <div class="mb-4">
                       <div class="text-center">
@@ -105,7 +105,7 @@
                         <div class="row g-3" id="step_0">
                         <div class="mb-1">
                           <label for="stepTitle" class="form-label step-title">Step 1</label>
-                          <input type="texr" class="form-control step-input" id="stepTitle" placeholder="e.g. Spread butter on bread" required>
+                          <input type="text" class="form-control step-input" id="stepTitle" placeholder="e.g. Spread butter on bread" required>
                         </div>
                         <div class="mb-1">
                           <label for="stepDescription" class="form-label">Detailed description</label>

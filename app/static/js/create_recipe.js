@@ -118,6 +118,9 @@ async function createRecipe(event) {
         return
     }
 
+    const formData = new FormData();
+    formData.append("image", document.getElementById("imgInput").files[0])
+
     info = {'title': titleInput.value, 'total_proteins': proteinsTotal.value, 
             'total_fats': fatsTotal.value, 'total_carbohydrates': carbohydratesTotal.value,
             'total_calories': caloriesTotal.value
@@ -125,22 +128,23 @@ async function createRecipe(event) {
 
     const products = document.getElementById("productsContainer").children
     for (var i = 0; i < products.length; i++) {
-        info[products[i].id] = {'product': products[i].getElementsByClassName("product-input")[0].value,
-                                'amount': products[i].getElementsByClassName("amount-input")[0].value}
+        info[products[i].id] = products[i].getElementsByClassName("product-input")[0].value
+        info['amount_' + products[i].id] = products[i].getElementsByClassName("amount-input")[0].value
     }
     
     const steps = document.getElementById("stepsContainer").children
     for (var i = 0; i < steps.length; i++) {
-        info[steps[i].id] = {'name': steps[i].getElementsByClassName("step-input")[0].value,
-                             'description': steps[i].getElementsByClassName("description-input")[0].value}
+        info[steps[i].id] = steps[i].getElementsByClassName("step-input")[0].value
+        info['description_' + steps[i].id] = steps[i].getElementsByClassName("description-input")[0].value
+    }
+
+    for ( var key in info ) {
+        formData.append(key, info[key]);
     }
 
     let response = await fetch('/api/create_new_recipe', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(info)
+        body: formData
     });
 
     if (response.ok) {
@@ -153,4 +157,19 @@ async function createRecipe(event) {
             document.getElementById("error").innerHTML = data['message']
         }
     } 
+}
+
+function showPreview(element) {
+    var file = document.getElementById("imgInput").files[0]
+    if (file) {
+        var fr = new FileReader();
+        fr.onload = function () {
+            document.getElementById("previewImg").src = fr.result;
+            document.getElementById("previewContainer").hidden = false
+        }
+        fr.readAsDataURL(file);
+    } else {
+        document.getElementById("previewImg").setAttribute("src", document.getElementById("previewImg").getAttribute("data-original"))
+        document.getElementById("previewContainer").hidden = true
+    }
 }
