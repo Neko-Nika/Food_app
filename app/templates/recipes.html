@@ -12,8 +12,9 @@
             <input type="text" oninput="filterRecipes(this)" id="inputSearch" class="form-control" placeholder="Enter recipe name" aria-label="" aria-describedby="button-addon2">
             <button class="btn btn-outline-success" type="button" id="button-addon2">Search</button>
         </div>
-        {% if request.user.is_authenticated %}
+        
         <a href="{% url 'create_recipe' %}" style="display: inline-block;" class="btn btn-primary add-btn">Add new recipe</a>
+        {% if request.user.is_authenticated %}
         <div class="form-check" style="display: inline-block;">
           <input class="form-check-input" data-user="{{ request.user.username }}" onclick="showMyRecipes(this)" type="checkbox" value="" id="OnlyMyRecipesCheck">
           <label class="form-check-label" for="OnlyMyRecipesCheck">Only my recipes</label>

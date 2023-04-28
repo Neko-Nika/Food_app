@@ -1,5 +1,21 @@
 window.onload = () => {
     doneBtn.onclick = createRecipe
+
+    const products = document.getElementById("productsContainer").children
+    for (let i = 0; i < products.length; i++) {
+        products[i].id = "product_" + i
+    } 
+
+    const info = document.getElementsByClassName("product-info")
+    for (let i = 0; i < info.length; i++) {
+        info[i].value = parseFloat(info[i].value.replace(',', '.')).toFixed(2)
+    }
+
+    const steps = document.getElementById("stepsContainer")
+    for (var i = 0; i < steps.children.length; i++) {
+        steps.children[i].getElementsByClassName("step-title")[0].innerHTML = "Step " + (i + 1)
+        steps.children[i].id = "step_" + i
+    }
 }
 
 function removeProduct(element) {
@@ -142,7 +158,13 @@ async function createRecipe(event) {
         formData.append(key, info[key]);
     }
 
-    let response = await fetch('/api/create_new_recipe', {
+    var url = '/api/create_new_recipe'
+    const status = parseInt(document.getElementById("titleInput").getAttribute("data-status"))
+    if (status === 2) {
+        url = '/api/edit_recipe/' + document.getElementById("create_recipe").getAttribute("data-id")
+    } 
+
+    let response = await fetch(url, {
         method: 'POST',
         body: formData
     });
