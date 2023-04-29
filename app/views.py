@@ -34,7 +34,7 @@ def signout(request):
 
 def recipes(request):
     context = {
-        'recipes': Recipe.objects.all()
+        'recipes': Recipe.objects.all().order_by("-likes")
     }
     return render(request, "recipes.html", context)
 

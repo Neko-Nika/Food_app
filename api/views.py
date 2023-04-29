@@ -212,3 +212,45 @@ def edit_recipe(request, id):
         }
         
         return JsonResponse(response_data, status=405)
+
+
+@csrf_exempt
+@login_required
+def like_recipe(request):
+    if request.method == "POST" and request.content_type == 'application/json':
+        data = json.loads(request.body)
+        try:
+            user = User.objects.get(id=int(data['user']))
+            recipe = Recipe.objects.get(id=int(data['recipe']))
+
+            if user in recipe.liked.all():
+                recipe.liked.remove(user)
+                recipe.likes -= 1
+            else:
+                recipe.liked.add(user)
+                recipe.likes += 1
+
+            recipe.save()
+            
+            response_data = {
+                'success': True,
+                'message': 'Recipe was updated'
+            }
+
+            return JsonResponse(response_data)
+        
+        except Exception as exc:
+            response_data = {
+                'success': False,
+                'message': exc
+            }
+
+            return JsonResponse(response_data)
+    else:
+
+        response_data = {
+            'success': False,
+            'message': 'Only POST requests are allowed'
+        }
+        
+        return JsonResponse(response_data, status=405)

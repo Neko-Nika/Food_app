@@ -8,7 +8,7 @@
 <div class="container">
     
     <div class="card mx-auto">
-        <div class="card-header">{{ recipe.title }}</div>
+        <div class="card-header">{{ recipe.title }} by @{{ recipe.author.username }}</div>
         <div class="card-body">
             <form id="recipe" data-id="{{ recipe.id }}" method="post">
                 {% csrf_token %}
@@ -108,6 +108,11 @@
             <button type="button" class="btn btn-primary" form="recipe" id="doneBtn">Edit</button>
         {% else %}
             <button type="button" class="btn btn-primary" form="recipe" id="doneBtn">Copy</button>
+            {% if request.user in recipe.liked.all %}
+              <button type="button" class="btn btn-primary" data-user="{{ request.user.id }}" data-recipe="{{ recipe.id }}" form="recipe" id="likeBtn"><i class="fa-solid fa-heart"></i>Liked</button>
+            {% else %}
+              <button type="button" class="btn btn-primary" data-user="{{ request.user.id }}" data-recipe="{{ recipe.id }}" form="recipe" id="likeBtn"><i class="fa-regular fa-heart"></i>Like</button>
+            {% endif %}
         {% endif %}
         </div>
       </div>

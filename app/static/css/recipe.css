@@ -30,12 +30,12 @@
     margin-bottom: 200px;
 }
 
-#doneBtn {
+#doneBtn, #likeBtn {
     background-color: #FF9FAA;
     border-color: #FF9FAA;
 }
 
-#doneBtn:hover {
+#doneBtn:hover, #likeBtn:hover {
     background-color: #c67c85;
     border-color: #c67c85;
 }
@@ -57,4 +57,9 @@
 
 .collapse-btn {
     width: 100%;
+}
+
+.card-footer {
+    display: flex;
+    justify-content: space-between;
 }

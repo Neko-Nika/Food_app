@@ -12,5 +12,30 @@ window.onload = () => {
     doneBtn.onclick = () => {
         window.location.replace('/create_recipe/' + document.getElementById("recipe").getAttribute("data-id"))
     }
+
+    likeBtn.onclick = likeBtnClicked
 }
 
+
+async function likeBtnClicked() {
+    let response = await fetch('/api/like_recipe', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        
+        body: JSON.stringify({
+            'user': document.getElementById("likeBtn").getAttribute("data-user"),
+            'recipe': document.getElementById("likeBtn").getAttribute("data-recipe")
+        })
+    });
+
+    if (response.ok) {
+        data = await response.json()
+        if (data['success'] == true) {
+            location.reload()
+        } else {
+            console.log(data['message'])
+        }
+    } 
+}

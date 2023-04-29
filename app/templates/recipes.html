@@ -28,9 +28,18 @@
             {% for recipe in recipes %}
             <div class="col">
               <div class="card h-100" onclick="goToRecipe(this)" data-id="{{ recipe.id }}">
-                <img src="{{ recipe.image.url }}" class="card-img-top recipe-image" alt="Recipe image">
+                <div class="card-header text-muted">
+                  <img src="{{ recipe.image.url }}" class="card-img-top recipe-image" alt="Recipe image">
+                </div>
                 <div class="card-body">
+                  {% if request.user in recipe.liked.all %}
+                  <p style="font-size: 18px;">{{ recipe.likes }} <i class="fa-solid fa-heart"></i></p>
+                  {% else %}
+                  <p style="font-size: 18px;">{{ recipe.likes }} <i class="fa-regular fa-heart"></i></p>
+                  {% endif %}
                   <h5 class="card-title">{{ recipe.title }}</h5>
+                </div>
+                <div class="card-footer text-muted">
                   <p class="card-text">@{{ recipe.author.username }}</p>
                 </div>
               </div>

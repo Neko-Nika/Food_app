@@ -19,6 +19,8 @@ class Recipe(models.Model):
 
     title = models.CharField(max_length=200, unique=False, blank=False, null=False)
     image = models.ImageField(upload_to='recipe_avatars/', default='recipe_avatars/no-photo.png', blank=True, null=True)
+    likes = models.IntegerField(unique=False, blank=False, null=False, default=0)
+    liked = models.ManyToManyField(User, related_name="liked_users")
     products = models.ManyToManyField(Product)
     steps = models.ManyToManyField(Step)
     amounts = ArrayField(models.IntegerField())
