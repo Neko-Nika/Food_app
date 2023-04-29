@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/recipe.css' %}">
+<script src="{% static 'js/recipe.js' %}"></script>
+
+<div class="container">
+    
+    <div class="card mx-auto">
+        <div class="card-header">{{ recipe.title }} by @{{ recipe.author.username }}</div>
+        <div class="card-body">
+            <form id="recipe" data-id="{{ recipe.id }}" method="post">
+                {% csrf_token %}
+                  <div class="mb-4" id="imgContainer">
+                    <img src="{{ recipe.image.url }}" data-original="{% static 'images/no-photo.png' %}" class="rounded mx-auto d-block" id="previewImg" alt="No image">
+                  </div>
+                  <div class="mb-4">
+                    <div class="row g-2 text-center">
+                      <div class="col-sm">
+                        <input id="proteinsTotal" type="text" value="{{ recipe.total_proteins }}" class="form-control form-control-sm product-info" disabled>
+                        <label for="proteinsTotal" class="form-label">Total proteins</label>
+                      </div>
+                      <div class="col-sm">
+                        <input id="fatsTotal" type="text" value="{{ recipe.total_fats }}" class="form-control form-control-sm product-info" disabled>
+                        <label for="fatsTotal" class="form-label ">Total fats</label>
+                      </div>
+                      <div class="col-sm">
+                        <input id="carbohydratesTotal" type="text" value="{{ recipe.total_carbohydrates }}" class="form-control form-control-sm product-info" disabled>
+                        <label for="carbohydratesTotal" class="form-label">Total carbohydrates</label>
+                      </div>
+                      <div class="col-sm">
+                        <input id="caloriesTotal" type="text" value="{{ recipe.total_calories }}" class="form-control form-control-sm product-info" disabled>
+                        <label for="caloriesTotal" class="form-label ">Total calories</label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="mb-4">
+                      <div class="text-center">
+                        <a class="btn btn-outline-success collapse-btn" data-bs-toggle="collapse" href="#productsCollapsed" role="button" aria-expanded="false" aria-controls="productsCollapsed">
+                          Open products list &darr;
+                        </a>
+                      </div>
+                      <div class="collapse" style="margin-top: 20px;" id="productsCollapsed">
+                      <div class="mb-3" id="productsContainer">
+                        {% for amount, product in products %}
+                        <div class="row g-3 mb-3 align-items-end">
+                          <div class="col-sm-7">
+                            <label for="exampleDataList" class="form-label">Product</label>
+                            <input class="form-control product-input" id="exampleDataList" placeholder="{{ product.name }}" disabled>
+                          </div>
+                          <div class="col-sm">
+                            <label for="amountInput" style="font-size: 17px;" class="form-label">Amount</label>
+                            <input name="amount" type="number" class="form-control amount-input" id="amountInput" placeholder="{{ amount }}" disabled>
+                          </div>
+                     
+                          <div class="row g-2 text-center">
+                            <div class="col-sm">
+                              <input id="proteins" type="text" value="{{ product.proteins }}" class="form-control form-control-sm product-info" disabled>
+                              <label for="proteins" class="form-label">Proteins</label>
+                            </div>
+                            <div class="col-sm">
+                              <input id="fats" type="text" value="{{ product.fats }}" class="form-control form-control-sm product-info" disabled>
+                              <label for="fats" class="form-label ">Fats</label>
+                            </div>
+                            <div class="col-sm">
+                              <input id="carbohydrates" type="text" value="{{ product.carbohydrates }}" class="form-control form-control-sm product-info" disabled>
+                              <label for="carbohydrates" class="form-label ">Carbohydrates</label>
+                            </div>
+                            <div class="col-sm">
+                              <input id="calories" type="text" value="{{ product.calories }}" class="form-control form-control-sm product-info" disabled>
+                              <label for="calories" class="form-label ">Calories</label>
+                            </div>
+                          </div>
+                          <hr/>
+                        </div>
+                        {% endfor %}
+                      </div>                
+                    </div>
+                  </div>
+                  <div class="mb-4">                  
+                    <div class="text-center">
+                      <a class="btn btn-outline-success collapse-btn" data-bs-toggle="collapse" href="#stepsCollapsed" role="button" aria-expanded="false" aria-controls="stepsCollapsed">
+                        Steps list &darr;
+                      </a>
+                    </div>
+                    <div class="collapse" style="margin-top: 20px;" id="stepsCollapsed">
+                      <div class="mb-3" id="stepsContainer">
+                        {% for step in recipe.steps.all %}
+                        <div class="row g-3">
+                        <div class="mb-1">
+                          <label for="stepTitle" class="form-label step-title"></label>
+                          <input type="text" class="form-control step-input" id="stepTitle" placeholder="{{ step.step }}" disabled>
+                        </div>
+                        <div class="mb-1">
+                          <label for="stepDescription" class="form-label">Detailed description</label>
+                          <textarea class="form-control description-input" id="stepDescription" rows="3" disabled>{{ step.description }}</textarea>
+                        </div>
+                        <hr/>
+                      </div>
+                      {% endfor %}            
+                    </div>
+                  </div>
+            </form>
+        </div>
+        <div class="card-footer">
+        {% if request.user == recipe.author %}
+            <button type="button" class="btn btn-primary" form="recipe" id="doneBtn">Edit</button>
+        {% else %}
+            <button type="button" class="btn btn-primary" form="recipe" id="doneBtn">Copy</button>
+            {% if request.user in recipe.liked.all %}
+              <button type="button" class="btn btn-primary" data-user="{{ request.user.id }}" data-recipe="{{ recipe.id }}" form="recipe" id="likeBtn"><i class="fa-solid fa-heart"></i>Liked</button>
+            {% else %}
+              <button type="button" class="btn btn-primary" data-user="{{ request.user.id }}" data-recipe="{{ recipe.id }}" form="recipe" id="likeBtn"><i class="fa-regular fa-heart"></i>Like</button>
+            {% endif %}
+        {% endif %}
+        </div>
+      </div>
+
+</div>
+
+
+{% endblock content %}

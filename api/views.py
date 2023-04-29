@@ -93,3 +93,164 @@ def create_account(request):
         
         return JsonResponse(response_data, status=405)
     
+
+@csrf_exempt
+@login_required
+def create_new_recipe(request):
+    if request.method == "POST":
+        data = request.POST
+        try:
+            title = data["title"]
+            total_proteins = float(data["total_proteins"])
+            total_fats = float(data["total_fats"])
+            total_carbohydrates = float(data["total_carbohydrates"])
+            total_calories = int(float(data["total_calories"]))
+
+            products = []
+            amounts = []
+            for pr in [x for x in data.keys() if x.startswith("product_")]:
+                products.append(Product.objects.get(name=data[pr]))
+                amounts.append(data['amount_' + pr])
+            
+            steps = []
+            for st in [x for x in data.keys() if x.startswith("step_")]:
+                step = Step.objects.create(step=data[st], description=data['description_' + st])
+                step.save()
+                steps.append(step)
+
+            recipe = Recipe.objects.create(author=request.user, title=title, total_proteins=total_proteins,
+                                           total_fats=total_fats, total_carbohydrates=total_carbohydrates, total_calories=total_calories,
+                                           amounts=amounts)
+            if 'image' in request.FILES:
+                recipe.image = request.FILES['image']
+            recipe.save()
+            recipe.products.add(*products)
+            recipe.steps.add(*steps)
+            recipe.save()
+
+            response_data = {
+                'success': True,
+                'message': 'Recipe was created'
+            }
+
+            return JsonResponse(response_data)
+        
+        except Exception as exc:
+            response_data = {
+                'success': False,
+                'message': exc
+            }
+
+            return JsonResponse(response_data)
+    else:
+
+        response_data = {
+            'success': False,
+            'message': 'Only POST requests are allowed'
+        }
+        
+        return JsonResponse(response_data, status=405)
+
+
+@csrf_exempt
+@login_required
+def edit_recipe(request, id):
+    if request.method == "POST":
+        data = request.POST
+        try:
+            title = data["title"]
+            total_proteins = float(data["total_proteins"])
+            total_fats = float(data["total_fats"])
+            total_carbohydrates = float(data["total_carbohydrates"])
+            total_calories = int(float(data["total_calories"]))
+
+            products = []
+            amounts = []
+            for pr in [x for x in data.keys() if x.startswith("product_")]:
+                products.append(Product.objects.get(name=data[pr]))
+                amounts.append(data['amount_' + pr])
+            
+            steps = []
+            for st in [x for x in data.keys() if x.startswith("step_")]:
+                step = Step.objects.create(step=data[st], description=data['description_' + st])
+                step.save()
+                steps.append(step)
+
+            recipe = Recipe.objects.get(id=id)
+            recipe.title = title
+            recipe.total_proteins = total_proteins
+            recipe.total_fats = total_fats
+            recipe.total_carbohydrates = total_carbohydrates
+            recipe.total_calories = total_calories
+
+            if 'image' in request.FILES:
+                recipe.image = request.FILES['image']
+            recipe.save()
+            recipe.products.add(*products)
+            recipe.steps.add(*steps)
+            recipe.save()
+
+            response_data = {
+                'success': True,
+                'message': 'Recipe was updated'
+            }
+
+            return JsonResponse(response_data)
+        
+        except Exception as exc:
+            response_data = {
+                'success': False,
+                'message': exc
+            }
+
+            return JsonResponse(response_data)
+    else:
+
+        response_data = {
+            'success': False,
+            'message': 'Only POST requests are allowed'
+        }
+        
+        return JsonResponse(response_data, status=405)
+
+
+@csrf_exempt
+@login_required
+def like_recipe(request):
+    if request.method == "POST" and request.content_type == 'application/json':
+        data = json.loads(request.body)
+        try:
+            user = User.objects.get(id=int(data['user']))
+            recipe = Recipe.objects.get(id=int(data['recipe']))
+
+            if user in recipe.liked.all():
+                recipe.liked.remove(user)
+                recipe.likes -= 1
+            else:
+                recipe.liked.add(user)
+                recipe.likes += 1
+
+            recipe.save()
+            
+            response_data = {
+                'success': True,
+                'message': 'Recipe was updated'
+            }
+
+            return JsonResponse(response_data)
+        
+        except Exception as exc:
+            response_data = {
+                'success': False,
+                'message': exc
+            }
+
+            return JsonResponse(response_data)
+    else:
+
+        response_data = {
+            'success': False,
+            'message': 'Only POST requests are allowed'
+        }
+        
+        return JsonResponse(response_data, status=405)
