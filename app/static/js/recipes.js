@@ -4,7 +4,7 @@ function filterRecipes(element) {
     
     for (let i = 0; i < cards.length; i++) {
         let title = cards[i].querySelector(".card .card-body .card-title");
-        let cardUser = cards[i].querySelector(".card .card-body .card-text")
+        let cardUser = cards[i].querySelector(".card .card-footer .card-text")
         let check = document.getElementById("OnlyMyRecipesCheck")
         let user = null
         if (check) {
