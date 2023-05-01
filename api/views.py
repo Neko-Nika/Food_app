@@ -186,6 +186,11 @@ def edit_recipe(request, id):
             if 'image' in request.FILES:
                 recipe.image = request.FILES['image']
             recipe.save()
+
+            recipe.products.clear()
+            recipe.steps.clear()
+            recipe.amounts = amounts
+
             recipe.products.add(*products)
             recipe.steps.add(*steps)
             recipe.save()
