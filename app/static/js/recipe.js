@@ -13,7 +13,6 @@ window.onload = () => {
         window.location.replace('/create_recipe/' + document.getElementById("recipe").getAttribute("data-id"))
     }
 
-    likeBtn.onclick = likeBtnClicked
 }
 
 
@@ -38,4 +37,27 @@ async function likeBtnClicked() {
             console.log(data['message'])
         }
     } 
+}
+
+async function delBtnClicked() {
+    console.log(1)
+    let response = await fetch('/api/delete_recipe', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        
+        body: JSON.stringify({
+            'recipe': document.getElementById("delBtn").getAttribute("data-recipe")
+        })
+    });
+
+    if (response.ok) {
+        data = await response.json()
+        if (data['success'] == true) {
+            window.location.replace("/recipes")
+        } else {
+            console.log(data['message'])
+        }
+    }
 }

@@ -106,14 +106,34 @@
         <div class="card-footer">
         {% if request.user == recipe.author %}
             <button type="button" class="btn btn-primary" form="recipe" id="doneBtn">Edit</button>
+            <button type="button" class="btn btn-outline-danger" form="recipe" data-bs-toggle="modal" data-bs-target="#exampleModal">Delete</button>
         {% else %}
             <button type="button" class="btn btn-primary" form="recipe" id="doneBtn">Copy</button>
             {% if request.user in recipe.liked.all %}
-              <button type="button" class="btn btn-primary" data-user="{{ request.user.id }}" data-recipe="{{ recipe.id }}" form="recipe" id="likeBtn"><i class="fa-solid fa-heart"></i>Liked</button>
+              <button type="button" class="btn btn-primary" data-user="{{ request.user.id }}" data-recipe="{{ recipe.id }}" onclick="likeBtnClicked()" form="recipe" id="likeBtn"><i class="fa-solid fa-heart"></i>Liked</button>
             {% else %}
-              <button type="button" class="btn btn-primary" data-user="{{ request.user.id }}" data-recipe="{{ recipe.id }}" form="recipe" id="likeBtn"><i class="fa-regular fa-heart"></i>Like</button>
+              <button type="button" class="btn btn-primary" data-user="{{ request.user.id }}" data-recipe="{{ recipe.id }}" onclick="likeBtnClicked()" form="recipe" id="likeBtn"><i class="fa-regular fa-heart"></i>Like</button>
             {% endif %}
         {% endif %}
+        </div>
+      </div>
+
+      <!-- Modal -->
+      <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Confirmation</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              Are you sure you want to delete the recipe?
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-danger" data-recipe="{{ recipe.id }}" onclick="delBtnClicked()" id="delBtn">Confirm</button>
+            </div>
+          </div>
         </div>
       </div>
 

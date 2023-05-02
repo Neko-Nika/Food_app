@@ -259,3 +259,37 @@ def like_recipe(request):
         }
         
         return JsonResponse(response_data, status=405)
+    
+
+@csrf_exempt
+@login_required
+def delete_recipe(request):
+    if request.method == "POST" and request.content_type == 'application/json':
+        data = json.loads(request.body)
+        try:
+            id = data['recipe']
+            obj = Recipe.objects.get(id=id)
+            obj.delete()
+            
+            response_data = {
+                'success': True,
+                'message': 'Recipe was deleted'
+            }
+
+            return JsonResponse(response_data)
+        
+        except Exception as exc:
+            response_data = {
+                'success': False,
+                'message': exc
+            }
+
+            return JsonResponse(response_data)
+    else:
+
+        response_data = {
+            'success': False,
+            'message': 'Only POST requests are allowed'
+        }
+        
+        return JsonResponse(response_data, status=405)    
