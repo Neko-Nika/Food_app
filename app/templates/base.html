@@ -35,7 +35,7 @@
           <a href="" class="btn dropdown-toggle navbar-option" data-bs-toggle="dropdown" aria-expanded="false" role="button" id="dropdownMenuButton1"><i class="fa-solid fa-user"></i>Profile</a>
           <ul class="dropdown-menu dropdown-menu-lg-end dropdown-menu-light" aria-labelledby="dropdownMenuButton1">
             {% if request.user.is_authenticated %}
-            <li><a class="dropdown-item" href="#"><i class="fa-solid fa-circle-info"></i>Information</a></li>
+            <li><a class="dropdown-item" href="/profile"><i class="fa-solid fa-circle-info"></i>Information</a></li>
             <li><a class="dropdown-item" href="#"><i class="fa-solid fa-gear"></i>Settings</a></li>
             <li><hr class="dropdown-divider"></li>
             <li class="logout"><a class="dropdown-item" href="/logout"><i class="fa-solid fa-right-from-bracket"></i>Log out</a></li>
@@ -49,6 +49,7 @@
       </div>
     </nav>
     {% endblock header%}
-    {% block content %} {% endblock content %} 
+    {% block content %} {% endblock content %}
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   </body> 
 </html>
