@@ -5,6 +5,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 import os
 import json
+from datetime import datetime
 from app.models import *
 
 
@@ -240,6 +241,236 @@ def like_recipe(request):
             response_data = {
                 'success': True,
                 'message': 'Recipe was updated'
+            }
+
+            return JsonResponse(response_data)
+        
+        except Exception as exc:
+            response_data = {
+                'success': False,
+                'message': exc
+            }
+
+            return JsonResponse(response_data)
+    else:
+
+        response_data = {
+            'success': False,
+            'message': 'Only POST requests are allowed'
+        }
+        
+        return JsonResponse(response_data, status=405)
+    
+
+@csrf_exempt
+@login_required
+def delete_recipe(request):
+    if request.method == "POST" and request.content_type == 'application/json':
+        data = json.loads(request.body)
+        try:
+            id = data['recipe']
+            obj = Recipe.objects.get(id=id)
+            obj.delete()
+            
+            response_data = {
+                'success': True,
+                'message': 'Recipe was deleted'
+            }
+
+            return JsonResponse(response_data)
+        
+        except Exception as exc:
+            response_data = {
+                'success': False,
+                'message': exc
+            }
+
+            return JsonResponse(response_data)
+    else:
+
+        response_data = {
+            'success': False,
+            'message': 'Only POST requests are allowed'
+        }
+        
+        return JsonResponse(response_data, status=405)    
+
+
+@csrf_exempt
+@login_required
+def create_day(request):
+    if request.method == "POST" and request.content_type == 'application/json':
+        data = json.loads(request.body)
+        try:
+            date = datetime.strptime(data['date'], "%d.%m.%Y")
+            total_proteins = float(data['total_proteins'])
+            total_fats = float(data['total_fats'])
+            total_carbohydrates = float(data['total_carbohydrates'])
+            total_calories = int(data['total_calories'])
+            water = float(data['water'])
+
+            meals = {'breakfast': [], 'lunch': [], 'dinner': [], 'snack': []}
+            for key in meals.keys():
+                for meal in data[key].values():
+                    obj = Meal.objects.create(
+                        grams=int(meal['grams']),
+                        proteins=float(meal['proteins']),
+                        fats=float(meal['fats']),
+                        carbohydrates=float(meal['carbohydrates']),
+                        calories=int(meal['calories'])
+                    )
+                    if meal['type'] == "Recipe":
+                        obj.recipe = Recipe.objects.get(id=int(meal['id']))
+                    else:
+                        obj.product = Product.objects.get(name=meal['id'])
+                    obj.save()
+
+                    meals[key].append(obj)
+            
+            new_day = Day.objects.create(
+                author=request.user,
+                date=date,
+                total_proteins=total_proteins,
+                total_fats=total_fats,
+                total_carbohydrates=total_carbohydrates,
+                total_calories=total_calories,
+                water=water
+            )
+
+            new_day.save()
+
+            if len(meals['breakfast']) > 0:
+                new_day.breakfast.add(*meals['breakfast'])
+            if len(meals['lunch']) > 0:
+                new_day.lunch.add(*meals['lunch'])
+            if len(meals['dinner']) > 0:
+                new_day.dinner.add(*meals['dinner'])
+            if len(meals['snack']) > 0:
+                new_day.snack.add(*meals['snack'])
+            new_day.save()
+
+            response_data = {
+                'success': True,
+                'message': 'Day has been created'
+            }
+
+            return JsonResponse(response_data)
+        
+        except Exception as exc:
+            response_data = {
+                'success': False,
+                'message': exc
+            }
+
+            return JsonResponse(response_data)
+    else:
+
+        response_data = {
+            'success': False,
+            'message': 'Only POST requests are allowed'
+        }
+        
+        return JsonResponse(response_data, status=405)
+
+
+@csrf_exempt
+@login_required
+def edit_day(request, id):
+    if request.method == "POST" and request.content_type == 'application/json':
+        data = json.loads(request.body)
+        try:
+            day_obj = Day.objects.get(id=int(id))
+            day_obj.breakfast.all().delete()
+            day_obj.lunch.all().delete()
+            day_obj.dinner.all().delete()
+            day_obj.snack.all().delete()
+
+            date = datetime.strptime(data['date'], "%d.%m.%Y")
+            total_proteins = float(data['total_proteins'])
+            total_fats = float(data['total_fats'])
+            total_carbohydrates = float(data['total_carbohydrates'])
+            total_calories = int(data['total_calories'])
+            water = float(data['water'])
+
+            meals = {'breakfast': [], 'lunch': [], 'dinner': [], 'snack': []}
+            for key in meals.keys():
+                for meal in data[key].values():
+                    obj = Meal.objects.create(
+                        grams=int(meal['grams']),
+                        proteins=float(meal['proteins']),
+                        fats=float(meal['fats']),
+                        carbohydrates=float(meal['carbohydrates']),
+                        calories=int(meal['calories'])
+                    )
+                    if meal['type'] == "Recipe":
+                        obj.recipe = Recipe.objects.get(id=int(meal['id']))
+                    else:
+                        obj.product = Product.objects.get(name=meal['id'])
+                    obj.save()
+
+                    meals[key].append(obj)
+            
+            day_obj.date = date
+            day_obj.total_proteins = total_proteins
+            day_obj.total_fats = total_fats
+            day_obj.total_carbohydrates = total_carbohydrates
+            day_obj.total_calories = total_calories
+            day_obj.water = water
+
+            day_obj.save()
+
+            if len(meals['breakfast']) > 0:
+                day_obj.breakfast.add(*meals['breakfast'])
+            if len(meals['lunch']) > 0:
+                day_obj.lunch.add(*meals['lunch'])
+            if len(meals['dinner']) > 0:
+                day_obj.dinner.add(*meals['dinner'])
+            if len(meals['snack']) > 0:
+                day_obj.snack.add(*meals['snack'])
+            day_obj.save()
+
+            response_data = {
+                'success': True,
+                'message': 'Day has been updated'
+            }
+
+            return JsonResponse(response_data)
+        
+        except Exception as exc:
+            response_data = {
+                'success': False,
+                'message': exc
+            }
+
+            return JsonResponse(response_data)
+    else:
+
+        response_data = {
+            'success': False,
+            'message': 'Only POST requests are allowed'
+        }
+        
+        return JsonResponse(response_data, status=405)
+
+
+@csrf_exempt
+@login_required
+def delete_day(request):
+    if request.method == "POST" and request.content_type == 'application/json':
+        data = json.loads(request.body)
+        try:
+            id = data['id']
+            obj = Day.objects.get(id=int(id))
+            obj.breakfast.all().delete()
+            obj.lunch.all().delete()
+            obj.dinner.all().delete()
+            obj.snack.all().delete()
+
+            obj.delete()
+
+            response_data = {
+                'success': True,
+                'message': 'Day has been deleted'
             }
 
             return JsonResponse(response_data)
