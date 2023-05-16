@@ -1,0 +1,467 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/diary.css' %}">
+<script src="{% static 'js/diary.js' %}"></script>
+
+<div class="container">
+    
+    <div class="row justify-content-center date-picker">
+        <div class="col-lg-3" style="text-align: right;">
+            <button class="btn date-btns" onclick="prevDay()"><i class="fa-solid fa-chevron-left fa-2xl"></i></button>
+        </div>
+        <div class="col-lg-3 col-sm-6">
+            <input id="date" value="{{ date }}" onchange="redirectToDate()" class="form-control" type="date" />
+        </div>
+        <div class="col-lg-3">
+            <button class="btn date-btns" onclick="nextDay()"><i class="fa-solid fa-chevron-right fa-2xl"></i></button>
+        </div>
+    </div>
+
+    <div class="card mx-auto">
+        <div class="card-body">
+            <form id="createDayForm" method="post">
+                {% csrf_token %}
+                <div class="mb-4">
+                    <div class="row g-2 text-center">
+                      <div class="col-sm">
+                        <input id="proteinsTotal" type="text" value="{% if day %} {{ day.total_proteins }} {% else %} 0.00 {% endif %}" class="form-control form-control-sm product-info" disabled>
+                        <label for="proteinsTotal" class="form-label">Proteins</label>
+                      </div>
+                      <div class="col-sm">
+                        <input id="fatsTotal" type="text" value="{% if day %} {{ day.total_fats }} {% else %} 0.00 {% endif %}" class="form-control form-control-sm product-info" disabled>
+                        <label for="fatsTotal" class="form-label ">Fats</label>
+                      </div>
+                      <div class="col-sm">
+                        <input id="carbohydratesTotal" type="text" value="{% if day %} {{ day.total_carbohydrates }} {% else %} 0.00 {% endif %}" class="form-control form-control-sm product-info" disabled>
+                        <label for="carbohydratesTotal" class="form-label">Carbohydrates</label>
+                      </div>
+                      <div class="col-sm">
+                        <input id="caloriesTotal" type="text" value="{% if day %} {{ day.total_calories }} {% else %} 0.00 {% endif %}" class="form-control form-control-sm product-info" disabled>
+                        <label for="caloriesTotal" class="form-label ">Calories</label>
+                      </div>
+                      <div class="col-sm">
+                        <input id="waterTotal" type="text" value="{% if day %} {{ day.water }} {% else %} 0.00 {% endif %}" class="form-control form-control-sm product-info" disabled>
+                        <label for="waterTotal" class="form-label ">Water, lt</label>
+                      </div>
+                    </div>
+                </div>
+                <div class="categories">
+                    <div class="mb-4 category">
+                        <div class="expander text-center">
+                            <a class="btn btn-outline-success collapse-btn" data-bs-toggle="collapse" href="#breakfastCollapsed" role="button" aria-expanded="false" aria-controls="breakfastCollapsed">
+                            Breakfast
+                            </a>
+                        </div>
+                        <div class="addbtn text-center">
+                            <button type="button" onclick="clearAll()" class="btn btn-outline-secondary" data-bs-category="breakfast" data-bs-toggle="modal" data-bs-target="#addRecipeModal">+</button>
+                        </div>
+                        <div class="collapse" style="margin-top: 20px;" id="breakfastCollapsed">
+                          {% if day and day.breakfast.all|length > 0 %}
+                            {% for meal in day.breakfast.all %}
+                            {% with index_id=forloop.counter|add:"-1" %}
+                            {% if meal.recipe %}
+                              <div class="row g-3 mb-3 align-items-end updater" id="breakfast_{{ index_id }}" data-id="{{ meal.recipe.id }}">
+                                <div class="col-sm-7">
+                                  <label for="copyinputname" class="form-label"><a href="/recipe/{{ meal.recipe.id }}" id="copyname" target="_blank">Recipe</a></label>
+                                  <input class="form-control product-input" value="{{ meal.recipe.title }}" list="datalistOptions" id="copyinputname" disabled>
+                                </div>
+                                {% else %}
+                                <div class="row g-3 mb-3 align-items-end updater" id="breakfast_{{ index_id }}">
+                                  <div class="col-sm-7">
+                                    <label for="copyinputname" class="form-label"><a id="copyname" target="_blank">Product</a></label>
+                                    <input class="form-control product-input" value="{{ meal.product.name }}" list="datalistOptions" id="copyinputname" disabled>
+                                  </div>
+                                {% endif %}
+                                <div class="col-sm">
+                                  <label for="copygrams" style="font-size: 17px;" class="form-label">Grams</label>
+                                  <input name="amount" type="number" min="1" value="{{ meal.grams }}" class="form-control amount-input" id="copygrams" disabled>
+                                </div>
+                                <div class="col-sm text-center">
+                                  <a class="btn btn-danger" onclick="removeProduct(this.parentElement.parentElement)" id="removeProductBtn">Remove</a>
+                                </div>
+                                <div class="row g-2 text-center">
+                                  <div class="col-sm">
+                                    <input id="copyproteins" type="text" value="{{ meal.proteins }}" class="form-control form-control-sm product-info" disabled>
+                                    <label for="copyproteins" class="form-label">Proteins</label>
+                                  </div>
+                                  <div class="col-sm">
+                                    <input id="copyfats" type="text" value="{{ meal.fats }}" class="form-control form-control-sm product-info" disabled>
+                                    <label for="copyfats" class="form-label ">Fats</label>
+                                  </div>
+                                  <div class="col-sm">
+                                    <input id="copycarbohydrates" type="text" value="{{ meal.carbohydrates }}" class="form-control form-control-sm product-info" disabled>
+                                    <label for="copycarbohydrates" class="form-label ">Carbohydrates</label>
+                                  </div>
+                                  <div class="col-sm">
+                                    <input id="copycalories" type="text" value="{{ meal.calories }}" class="form-control form-control-sm product-info" disabled>
+                                    <label for="copycalories" class="form-label ">Calories</label>
+                                  </div>
+                                </div>
+                                <hr/>
+                            </div>
+                              {% endwith %}
+                            {% endfor %}
+                          {% endif %}
+                        </div>              
+                    </div>
+                    <div class="mb-4 category">
+                        <div class="expander text-center">
+                            <a class="btn btn-outline-success collapse-btn" data-bs-toggle="collapse" href="#lunchCollapsed" role="button" aria-expanded="false" aria-controls="lunchCollapsed">
+                            Lunch
+                            </a>
+                        </div>
+                        <div class="addbtn text-center">
+                            <button type="button" onclick="clearAll()" class="btn btn-outline-secondary" data-bs-category="lunch" data-bs-toggle="modal" data-bs-target="#addRecipeModal">+</button>
+                        </div>
+                        <div class="collapse" style="margin-top: 20px;" id="lunchCollapsed">
+                          {% if day and day.lunch.all|length > 0 %}
+                            {% for meal in day.lunch.all %}
+                            {% with index_id=forloop.counter|add:"-1" %}
+                            {% if meal.recipe %}
+                              <div class="row g-3 mb-3 align-items-end updater" id="lunch_{{ index_id }}" data-id="{{ meal.recipe.id }}">
+                                <div class="col-sm-7">
+                                  <label for="copyinputname" class="form-label"><a href="/recipe/{{ meal.recipe.id }}" id="copyname" target="_blank">Recipe</a></label>
+                                  <input class="form-control product-input" value="{{ meal.recipe.title }}" list="datalistOptions" id="copyinputname" disabled>
+                                </div>
+                                {% else %}
+                                <div class="row g-3 mb-3 align-items-end updater" id="lunch_{{ index_id }}">
+                                  <div class="col-sm-7">
+                                    <label for="copyinputname" class="form-label"><a id="copyname" target="_blank">Product</a></label>
+                                    <input class="form-control product-input" value="{{ meal.product.name }}" list="datalistOptions" id="copyinputname" disabled>
+                                  </div>
+                                {% endif %}
+                                <div class="col-sm">
+                                  <label for="copygrams" style="font-size: 17px;" class="form-label">Grams</label>
+                                  <input name="amount" type="number" min="1" value="{{ meal.grams }}" class="form-control amount-input" id="copygrams" disabled>
+                                </div>
+                                <div class="col-sm text-center">
+                                  <a class="btn btn-danger" onclick="removeProduct(this.parentElement.parentElement)" id="removeProductBtn">Remove</a>
+                                </div>
+                                <div class="row g-2 text-center">
+                                  <div class="col-sm">
+                                    <input id="copyproteins" type="text" value="{{ meal.proteins }}" class="form-control form-control-sm product-info" disabled>
+                                    <label for="copyproteins" class="form-label">Proteins</label>
+                                  </div>
+                                  <div class="col-sm">
+                                    <input id="copyfats" type="text" value="{{ meal.fats }}" class="form-control form-control-sm product-info" disabled>
+                                    <label for="copyfats" class="form-label ">Fats</label>
+                                  </div>
+                                  <div class="col-sm">
+                                    <input id="copycarbohydrates" type="text" value="{{ meal.carbohydrates }}" class="form-control form-control-sm product-info" disabled>
+                                    <label for="copycarbohydrates" class="form-label ">Carbohydrates</label>
+                                  </div>
+                                  <div class="col-sm">
+                                    <input id="copycalories" type="text" value="{{ meal.calories }}" class="form-control form-control-sm product-info" disabled>
+                                    <label for="copycalories" class="form-label ">Calories</label>
+                                  </div>
+                                </div>
+                                <hr/>
+                            </div>
+                              {% endwith %}
+                            {% endfor %}
+                          {% endif %}
+                        </div>
+                    </div>
+                    <div class="mb-4 category">
+                        <div class="expander text-center">
+                            <a class="btn btn-outline-success collapse-btn" data-bs-toggle="collapse" href="#dinnerCollapsed" role="button" aria-expanded="false" aria-controls="dinnerCollapsed">
+                            Dinner
+                            </a>
+                        </div>
+                        <div class="addbtn text-center">
+                            <button type="button" onclick="clearAll()" class="btn btn-outline-secondary" data-bs-category="dinner" data-bs-toggle="modal" data-bs-target="#addRecipeModal">+</button>
+                        </div>
+                        <div class="collapse" style="margin-top: 20px;" id="dinnerCollapsed">
+                          {% if day and day.dinner.all|length > 0 %}
+                            {% for meal in day.dinner.all %}
+                            {% with index_id=forloop.counter|add:"-1" %}
+                            {% if meal.recipe %}
+                              <div class="row g-3 mb-3 align-items-end updater" id="dinner_{{ index_id }}" data-id="{{ meal.recipe.id }}">
+                                <div class="col-sm-7">
+                                  <label for="copyinputname" class="form-label"><a href="/recipe/{{ meal.recipe.id }}" id="copyname" target="_blank">Recipe</a></label>
+                                  <input class="form-control product-input" value="{{ meal.recipe.title }}" list="datalistOptions" id="copyinputname" disabled>
+                                </div>
+                                {% else %}
+                                <div class="row g-3 mb-3 align-items-end updater" id="dinner_{{ index_id }}">
+                                  <div class="col-sm-7">
+                                    <label for="copyinputname" class="form-label"><a id="copyname" target="_blank">Product</a></label>
+                                    <input class="form-control product-input" value="{{ meal.product.name }}" list="datalistOptions" id="copyinputname" disabled>
+                                  </div>
+                                {% endif %}
+                                <div class="col-sm">
+                                  <label for="copygrams" style="font-size: 17px;" class="form-label">Grams</label>
+                                  <input name="amount" type="number" min="1" value="{{ meal.grams }}" class="form-control amount-input" id="copygrams" disabled>
+                                </div>
+                                <div class="col-sm text-center">
+                                  <a class="btn btn-danger" onclick="removeProduct(this.parentElement.parentElement)" id="removeProductBtn">Remove</a>
+                                </div>
+                                <div class="row g-2 text-center">
+                                  <div class="col-sm">
+                                    <input id="copyproteins" type="text" value="{{ meal.proteins }}" class="form-control form-control-sm product-info" disabled>
+                                    <label for="copyproteins" class="form-label">Proteins</label>
+                                  </div>
+                                  <div class="col-sm">
+                                    <input id="copyfats" type="text" value="{{ meal.fats }}" class="form-control form-control-sm product-info" disabled>
+                                    <label for="copyfats" class="form-label ">Fats</label>
+                                  </div>
+                                  <div class="col-sm">
+                                    <input id="copycarbohydrates" type="text" value="{{ meal.carbohydrates }}" class="form-control form-control-sm product-info" disabled>
+                                    <label for="copycarbohydrates" class="form-label ">Carbohydrates</label>
+                                  </div>
+                                  <div class="col-sm">
+                                    <input id="copycalories" type="text" value="{{ meal.calories }}" class="form-control form-control-sm product-info" disabled>
+                                    <label for="copycalories" class="form-label ">Calories</label>
+                                  </div>
+                                </div>
+                                <hr/>
+                            </div>
+                              {% endwith %}
+                            {% endfor %}
+                          {% endif %}
+                        </div>
+                    </div>
+                    <div class="mb-4 category">
+                        <div class="expander text-center">
+                            <a class="btn btn-outline-success collapse-btn" data-bs-toggle="collapse" href="#snackCollapsed" role="button" aria-expanded="false" aria-controls="snackCollapsed">
+                            Snack
+                            </a>
+                        </div>
+                        <div class="addbtn text-center">
+                            <button type="button" onclick="clearAll()" class="btn btn-outline-secondary" data-bs-category="snack" data-bs-toggle="modal" data-bs-target="#addRecipeModal">+</button>
+                        </div>
+                        <div class="collapse" style="margin-top: 20px;" id="snackCollapsed">
+                          {% if day and day.snack.all|length > 0 %}
+                            {% for meal in day.snack.all %}
+                            {% with index_id=forloop.counter|add:"-1" %}
+                            {% if meal.recipe %}
+                              <div class="row g-3 mb-3 align-items-end updater" id="snack_{{ index_id }}" data-id="{{ meal.recipe.id }}">
+                                <div class="col-sm-7">
+                                  <label for="copyinputname" class="form-label"><a href="/recipe/{{ meal.recipe.id }}" id="copyname" target="_blank">Recipe</a></label>
+                                  <input class="form-control product-input" value="{{ meal.recipe.title }}" list="datalistOptions" id="copyinputname" disabled>
+                                </div>
+                                {% else %}
+                                <div class="row g-3 mb-3 align-items-end updater" id="snack_{{ index_id }}">
+                                  <div class="col-sm-7">
+                                    <label for="copyinputname" class="form-label"><a id="copyname" target="_blank">Product</a></label>
+                                    <input class="form-control product-input" value="{{ meal.product.name }}" list="datalistOptions" id="copyinputname" disabled>
+                                  </div>
+                                {% endif %}
+                                <div class="col-sm">
+                                  <label for="copygrams" style="font-size: 17px;" class="form-label">Grams</label>
+                                  <input name="amount" type="number" min="1" value="{{ meal.grams }}" class="form-control amount-input" id="copygrams" disabled>
+                                </div>
+                                <div class="col-sm text-center">
+                                  <a class="btn btn-danger" onclick="removeProduct(this.parentElement.parentElement)" id="removeProductBtn">Remove</a>
+                                </div>
+                                <div class="row g-2 text-center">
+                                  <div class="col-sm">
+                                    <input id="copyproteins" type="text" value="{{ meal.proteins }}" class="form-control form-control-sm product-info" disabled>
+                                    <label for="copyproteins" class="form-label">Proteins</label>
+                                  </div>
+                                  <div class="col-sm">
+                                    <input id="copyfats" type="text" value="{{ meal.fats }}" class="form-control form-control-sm product-info" disabled>
+                                    <label for="copyfats" class="form-label ">Fats</label>
+                                  </div>
+                                  <div class="col-sm">
+                                    <input id="copycarbohydrates" type="text" value="{{ meal.carbohydrates }}" class="form-control form-control-sm product-info" disabled>
+                                    <label for="copycarbohydrates" class="form-label ">Carbohydrates</label>
+                                  </div>
+                                  <div class="col-sm">
+                                    <input id="copycalories" type="text" value="{{ meal.calories }}" class="form-control form-control-sm product-info" disabled>
+                                    <label for="copycalories" class="form-label ">Calories</label>
+                                  </div>
+                                </div>
+                                <hr/>
+                            </div>
+                              {% endwith %}
+                            {% endfor %}
+                          {% endif %}
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <div class="expander text-center">
+                            <a class="btn btn-outline-success collapse-btn" data-bs-toggle="collapse" href="#waterCollapsed" role="button" aria-expanded="false" aria-controls="waterCollapsed">
+                            Water tracker
+                            </a>
+                        </div>
+                        <div class="addbtn text-center">
+                            <button type="button" onclick="resetWater()" class="btn btn-outline-secondary">x</button>
+                        </div>
+                        <div class="collapse" style="margin-top: 20px;" id="waterCollapsed">
+                          <div class="mb-4">
+                            <label for="waterInput" class="form-label">Enter water in liters</label>
+                            <input class="form-control" type="number" oninput="setupWater(this.value)" step="0.01" id="waterInput" placeholder="E.g. 2 or 1.5" >
+                          </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="card-footer">
+            <button type="button" class="btn btn-primary" onclick="createDay()" form="create_day" id="doneBtn">Done</button>
+            {% if day %}
+            <button type="button" class="btn btn-outline-danger" onclick="deleteDay()" form="create_day" id="delBtn">Reset</button>
+            {% endif %}
+        </div>
+        <div class="alert alert-danger mx-auto" role="alert" id="error" hidden></div>
+      </div>
+      
+    
+      <div class="row g-3 mb-3 align-items-end updater" id="copy" hidden>
+          <div class="col-sm-7">
+            <label for="copyinputname" class="form-label"><a href="" id="copyname" target="_blank"></a></label>
+            <input class="form-control product-input" list="datalistOptions" id="copyinputname" disabled>
+          </div>
+          <div class="col-sm">
+            <label for="copygrams" style="font-size: 17px;" class="form-label">Grams</label>
+            <input name="amount" type="number" min="1" class="form-control amount-input" id="copygrams" disabled>
+          </div>
+          <div class="col-sm text-center">
+            <a class="btn btn-danger" onclick="removeProduct(this.parentElement.parentElement)" id="removeProductBtn">Remove</a>
+          </div>
+          <div class="row g-2 text-center">
+            <div class="col-sm">
+              <input id="copyproteins" type="text" value="0.00" class="form-control form-control-sm product-info" disabled>
+              <label for="copyproteins" class="form-label">Proteins</label>
+            </div>
+            <div class="col-sm">
+              <input id="copyfats" type="text" value="0.00" class="form-control form-control-sm product-info" disabled>
+              <label for="copyfats" class="form-label ">Fats</label>
+            </div>
+            <div class="col-sm">
+              <input id="copycarbohydrates" type="text" value="0.00" class="form-control form-control-sm product-info" disabled>
+              <label for="copycarbohydrates" class="form-label ">Carbohydrates</label>
+            </div>
+            <div class="col-sm">
+              <input id="copycalories" type="text" value="0.00" class="form-control form-control-sm product-info" disabled>
+              <label for="copycalories" class="form-label ">Calories</label>
+            </div>
+          </div>
+          <hr/>
+      </div>
+
+      
+
+      <!-- Modal -->
+    <div class="modal fade" id="addRecipeModal" tabindex="-1" aria-labelledby="addRecipeModalLabel" >
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addRecipeModalLabel"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                      <button class="nav-link active" onclick="clearForProducts()" id="pills-recipes-tab" data-bs-toggle="pill" data-bs-target="#pills-recipes" type="button" role="tab" aria-controls="pills-recipes" aria-selected="true">Recipes</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                      <button class="nav-link" onclick="clearForRecipes()" id="pills-products-tab" data-bs-toggle="pill" data-bs-target="#pills-products" type="button" role="tab" aria-controls="pills-products" aria-selected="false">Products</button>
+                    </li>
+                </ul>
+                <div class="tab-content mt-4" id="pills-tabContent">
+                    <div class="tab-pane fade show active" id="pills-recipes" role="tabpanel" aria-labelledby="pills-recipes-tab">
+                        <div class="mb-4">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="inlineRadioOptions" onchange="filterRecipes(this.value)" id="all_check" value="dataListRecipes" checked>
+                                <label class="form-check-label" for="inlineRadio1">All</label>
+                              </div>
+                              <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="inlineRadioOptions" onchange="filterRecipes(this.value)" id="liked_check" value="dataListRecipesLiked">
+                                <label class="form-check-label" for="inlineRadio2">Liked</label>
+                              </div>
+                              <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="inlineRadioOptions" onchange="filterRecipes(this.value)" id="mine_check" value="dataListRecipesMine">
+                                <label class="form-check-label" for="inlineRadio3">Mine</label>
+                              </div>
+                        </div>
+                        <div class="mb-4">
+                            <label for="lastnameInput" class="form-label">Recipe</label>
+                            <input class="form-control" autocomplete="off" onchange="setupParameters()" list="dataListRecipes" id="recipeInput" placeholder="Type to search..." >
+                        </div>
+                        <div class="mb-4">
+                            <img src="" alt="No photo" id="recipeImage" hidden>
+                        </div>
+                        <div class="mb-4">
+                            <label for="lastnameInput" class="form-label">Enter grams</label>
+                            <input name="amount" type="number" onchange="updateParameters(this.value)" min="1" class="form-control amount-input" id="amountInput" placeholder="Amount" disabled>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="pills-products" role="tabpanel" aria-labelledby="pills-products-tab">
+                        <div class="mb-4">
+                          <label for="lastnameInput" class="form-label">Product</label>
+                          <input class="form-control" onchange="setupParametersProduct()" list="dataListProducts" id="productInput" placeholder="Type to search..." >
+                        </div>
+                        <div class="mb-4">
+                          <label for="lastnameInput" class="form-label">Enter grams</label>
+                          <input name="amount" type="number" onchange="updateParameters(this.value)" min="1" class="form-control amount-input" id="amountInputProduct" placeholder="Amount" disabled>
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <div class="row g-2 text-center">
+                        <div class="col-sm">
+                          <input id="proteins" type="text" value="0.00" class="form-control form-control-sm product-info" disabled>
+                          <label for="proteins" class="form-label">Proteins</label>
+                        </div>
+                        <div class="col-sm">
+                          <input id="fats" type="text" value="0.00" class="form-control form-control-sm product-info" disabled>
+                          <label for="fats" class="form-label ">Fats</label>
+                        </div>
+                        <div class="col-sm">
+                          <input id="carbohydrates" type="text" value="0.00" class="form-control form-control-sm product-info" disabled>
+                          <label for="carbohydrates" class="form-label ">Carbohydrates</label>
+                        </div>
+                        <div class="col-sm">
+                          <input id="calories" type="text" value="0.00" class="form-control form-control-sm product-info" disabled>
+                          <label for="calories" class="form-label ">Calories</label>
+                        </div>
+                      </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" onclick="clearAll()" class="btn btn-outline-primary">Clear</button>
+                <button type="button" onclick="saveBtnClicked()" class="btn btn-primary" data-bs-dismiss="modal">Save</button>
+            </div>
+        </div>
+        </div>
+    </div>
+    <datalist id="dataListRecipes">
+        {% for recipe, grams in recipes %}
+          <option data-proteins="{{ recipe.total_proteins }}" data-fats="{{ recipe.total_fats }}" data-carbohydrates="{{ recipe.total_carbohydrates }}" data-calories="{{ recipe.total_calories }}"
+           data-id="{{ recipe.id }}" data-img="{{ recipe.image.url }}" data-grams="{{ grams }}" value="{{ recipe.title }} by @{{ recipe.author.username }}">
+            @{{ recipe.author.username }}
+          </option>
+        {% endfor %}
+    </datalist>
+    <datalist id="dataListRecipesLiked">
+        {% for recipe in liked %}
+          <option data-id="{{ recipe.id }}" value="{{ recipe.title }} by @{{ recipe.author.username }}">
+            @{{ recipe.author.username }}
+          </option>
+        {% endfor %}
+    </datalist>
+    <datalist id="dataListRecipesMine">
+        {% for recipe in mine %}
+          <option data-id="{{ recipe.id }}" value="{{ recipe.title }} by @{{ recipe.author.username }}">
+            @{{ recipe.author.username }}
+          </option>
+        {% endfor %}
+    </datalist>
+    <datalist id="dataListProducts">
+      {% for product in products %}
+        <option data-proteins="{{ product.proteins }}" data-fats="{{ product.fats }}" data-carbohydrates="{{ product.carbohydrates }}" data-calories="{{ product.calories }}"
+        data-id="{{ product.id }}" value="{{ product.name }}"></option>
+      {% endfor %}
+    </datalist>
+    {% if day %}
+    <div id="extra_info" data-obj="1" data-day_id="{{ day.id }}" hidden></div>
+    {% else %}
+    <div id="extra_info" data-obj="0" hidden></div>
+    {% endif %}
+</div>
+
+{% endblock content %}

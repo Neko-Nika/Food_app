@@ -9,10 +9,28 @@ window.onload = () => {
         steps.children[i].getElementsByClassName("step-title")[0].innerHTML = "Step " + (i + 1)
     }
 
+    setupParameters()
+
     doneBtn.onclick = () => {
         window.location.replace('/create_recipe/' + document.getElementById("recipe").getAttribute("data-id"))
     }
 
+}
+
+
+function setupParameters() {
+    var products = document.getElementById("productsContainer").children
+
+    for (let i = 0; i < products.length; i++) {
+        var amount = parseInt(products[i].getElementsByClassName("amount-input")[0].value)
+        var info = products[i].getElementsByClassName("product-info")
+
+        info[0].value = (parseFloat(info[0].value.replace(',', '.')) / 100 * amount).toFixed(2)
+        info[1].value = (parseFloat(info[1].value.replace(',', '.')) / 100 * amount).toFixed(2)
+        info[2].value = (parseFloat(info[2].value.replace(',', '.')) / 100 * amount).toFixed(2)
+        info[3].value = Math.round(parseInt(info[3].value.replace(',', '.')) / 100 * amount)
+    }
+   
 }
 
 
