@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+    <script src="{% static 'js/create_recipe.js' %}"></script>
+    <form enctype="multipart/form-data" id="change_profile" method="post" action="/change-profile" class="container">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="usernameInput" class="form-label">Username</label>
+            <input type="text" class="form-control" id="usernameInput" name="username"
+                   value="{{ profile.user.username }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="emailInput" class="form-label">Email</label>
+            <input type="email" class="form-control" id="emailInput" name="email" value="{{ profile.user.email }}"
+                   required>
+        </div>
+        <div class="mb-3">
+            <label for="nameInput" class="form-label">name</label>
+            <input type="text" class="form-control" id="nameInput" name="name"
+                   value="{{ profile.user.first_name }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="lastnameInput" class="form-label">last name</label>
+            <input type="text" class="form-control" id="lastnameInput" name="lastname"
+                   value="{{ profile.user.last_name }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="imgInput" class="form-label">Avatar</label>
+            <input class="form-control" type="file" onchange="showPreview(this)" id="imgInput" accept="image/*"
+                   name="avatar" value="{{ profile.avatar }}">
+        </div>
+        <div class="card-footer">
+            <button type="submit" class="btn btn-primary" form="change_profile" id="signInBtn">обновить</button>
+        </div>
+    </form>
+{% endblock %}

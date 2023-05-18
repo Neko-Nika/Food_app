@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+    <form enctype="multipart/form-data" id="change_weight" method="post" action="/change-weight" class="container">
+    {% csrf_token %}
+    <div class="mb-3">
+        <p>Укажи вес в виде 65,2</p>
+        <label for="weightInput" class="form-label">weight</label>
+        <input type="number" step="0.1" class="form-control" id="weightInput" name="weight" value="{{ profile.user.weight }}" required min="1">
+    </div>
+    <div class="card-footer">
+        <button type="submit" class="btn btn-primary" form="change_weight" id="signInBtn">обновить</button>
+    </div>
+    </form>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+    <div class="content-section text-center">
+        <div class="media">
+            <img class="rounded-circle account-img" src="{{ user.profile.avatar.url }}">
+            <div class="media-body">
+                <h2 class="account-heading">{{ user.username }}</h2>
+                <p class="text-secondary">{{ user.email }}</p>
+                <p>тип учетной записи {% if user.profile.isFree %}БЕСПЛАТНАЯ{% else %}ПЛАТНАЯ{% endif %} </p>
+                <p>имя: {{ user.first_name }}</p>
+            <p>фамилия: {{ user.last_name }}</p>
+            </div>
+            <div class="media-body">ваш вес == {{ user.profile.weight }}</div>
+        </div>
+        <a class="btn btn-primary mb-2" href="/change-profile">изменить профиль</a><br>
+        <a class="btn btn-primary mb-2" href="/change-weight">указать вес</a><br>
+        <a class="btn btn-primary mb-2" href="">Фотоальбом</a><br>
+        <a class="btn btn-primary mb-2" href="">Написать в поддержку</a><br>
+        <a class="btn btn-primary mb-2" href="/reminders">Напоминания</a><br>
+    </div>
+{% endblock %}
