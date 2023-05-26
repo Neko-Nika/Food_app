@@ -1,0 +1,203 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<!-- Функции в report.js продублированы из diary.js -->
+<script src="{% static 'js/report.js' %}"></script>
+<!-- Подключаем JQuery для реактивного изменения элементов страницы -->
+<script
+	  src="https://code.jquery.com/jquery-3.7.0.js"
+	  integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM="
+	  crossorigin="anonymous">
+</script>
+<!-- Набор стилей css для круговой диаграммы -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/circles/0.0.6/circles.min.css">
+<!-- Календарь и кнопка даты -->
+<!-- Продублировано из шаблона diary.html-->
+<div class="report-body">
+<div class="container">
+	<div class="row justify-content-center date-picker">
+		<div class="col-lg-3" style="text-align: right;">
+			<button class="btn date-btns" onclick="prevDay()"><i class="fa-solid fa-chevron-left fa-2xl"></i></button>
+		</div>
+		<div class="col-lg/-3 col-sm-6">
+			<input id="date" value="{{ date }}" onchange="redirectToDate()" min={{ today }} class="form-control" type="date" />
+		</div>
+		<div class="col-lg-3">
+			<button class="btn date-btns" onclick="nextDay()"><i class="fa-solid fa-chevron-right fa-2xl"></i></button>
+		</div>
+	</div>
+</div>
+<!-- БЖУ и калории -->
+<div class="composition">
+	<ul class="composition-list">
+	    	<li>
+			<div>
+		    		<p>
+					Жиры
+				</p>
+				<p>
+					{{ day.total_fats }}
+				</p>
+	    		</div>
+		</li>
+		<li>
+			<div>
+		    		<p>
+					Углеводы
+				</p>
+				<p>
+					{{ day.total_carbohydrates }}
+				</p>
+	    		</div>
+		</li>
+		<li>
+			<div>
+		    		<p>
+					Белки
+				</p>
+				<p>
+					{{ day.total_proteins }}
+				</p>
+	    		</div>
+		</li>
+		<li>
+			<div>
+		    		<p>
+					PCK
+				</p>
+				<p>
+					{{ day.water }}
+				</p>
+	    		</div>
+		</li>
+		<li>
+			<div>
+		    		<p>
+					Калории
+				</p>
+				<p>
+					{{ day.total_calories }}
+				</p>
+			</div>
+		</li>
+	</ul>
+</div>
+<div class="calories">
+	<h2>
+		Калории
+	</h2>
+	<h2 id="total-calories">
+		<span>
+		{{ day.total_calories }}
+		</span>
+	</h2>
+	<div class="line-block">
+		<p class="percentage">
+		<span id="percentage-value">
+		</span>
+			% от цели
+		</p>
+		<form class="aim">
+			{% csrf_token %}
+			Цель:
+			<input type="text" class="aim-input" id="aim-input" />
+		<p class="aim">
+		<span id="aim-value">
+		</span>
+			ккал
+		</p>
+		</form>
+		<!-- Скрипт на JQuery -->
+		<script>
+			$(document).ready(function() {
+				var input	= $("#aim-input");		// Поле ввода (цель по калориям)
+				var total	= $("#total-calories");		// Сумма калорий за сутки
+				var percentage	= $("#percentage-value");	// Сюда поместит процент калорий
+
+				// При вводе/изменении значения в поле ввода перехватываем это событие
+				// и в переменную result записываем процент потребленных калорий
+				input.on('input change paste', function() {
+					var result = parseInt((parseInt(total.text()) / parseInt(input.val()) * 100));
+					// Записываем результат
+					percentage.text(result);
+				});
+			});
+		</script>
+	</div>
+</div>
+<!-- Круговая диаграмма -->
+<div class="diagram">
+
+<div id="my_circle" id="circle">
+</div>
+
+<!-- Набор функций для реактивной круговой диаграммы -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/circles/0.0.6/circles.min.js"></script>
+<script>
+	var myCircle = Circles.create({
+		id: 'my_circle',
+		radius: 80,
+		value: 0,
+		maxValue: 100,
+		width: 10,
+		colors: ['#fff', '#0f0'],
+		duration: 500,
+		textClass: 'my-text-class'
+	});
+
+	$(window).resize(function() {
+		// При изменении размеров окна меняем радиус диаграммы
+		myCircle.updateRadius();
+	});
+
+	$(document).ready(function() {
+		var input	= $("#aim-input");		// Поле ввода
+		var total	= $("#total-calories");		// Суммарные калории
+
+		input.on('input change paste', function() {
+			var result = parseInt((parseInt(total.text()) / parseInt(input.val()) * 100));
+			// Меняем значение диаграммы на полученный процент калорий
+			myCircle.update(result);
+		});
+	});
+</script>
+
+</div>
+<!-- Приемы пищи -->
+<div class="meals">
+	<div class="meal">
+			<p>
+				Завтрак
+				{% if breakfast %}
+					{{ breakfast }}
+				{% endif %}
+			</p>
+		</div>
+		<div class="meal">
+			<p>
+				Обед
+				{% if lunch %}
+					{{ lunch }}
+				{% endif %}
+			</p>
+		</div>
+		<div class="meal">
+			<p>
+				Ужин
+				{% if dinner %}
+					{{ dinner }}
+				{% endif %}
+			</p>
+		</div>
+		<div class="meal">
+			<p>
+				Перекус
+				{% if snack %}
+					{{ snack }}
+				{% endif %}
+			</p>
+		</div>
+	</div>
+</div>
+{% endblock content %}

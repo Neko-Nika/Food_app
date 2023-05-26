@@ -3,6 +3,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 
+from django.db.models import Sum
+
 import app.models
 from app.models import *
 
@@ -68,7 +70,6 @@ def recipe(request, id):
         "products": zip(obj.amounts, obj.products.all().order_by("id"))
     }
     return render(request, "recipe.html", context)
-
 
 @login_required(login_url="login")
 def diary(request):
@@ -213,3 +214,60 @@ def create_reminder(request):
     elif request.method == 'DELETE':
         pass
     return render(request, 'create_reminder.html')
+
+# Отчеты
+@login_required(login_url="login")
+def report(request):
+    today = datetime.datetime.today().strftime("%Y-%m-%d")
+    try:
+        day = Day.objects.get(author=request.user, date=today)
+        # Считаем сумму калорий всех блюд завтрака (далее та же схема для других приемов пищи)
+        breakfast   = day.breakfast.all().aggregate(Sum('calories'))['calories__sum']
+        lunch       = day.lunch.all().aggregate(Sum('calories'))['calories__sum']
+        dinner      = day.dinner.all().aggregate(Sum('calories'))['calories__sum']
+        snack       = day.snack.all().aggregate(Sum('calories'))['calories__sum']
+    except Day.DoesNotExist:
+        day = None
+        breakfast = None
+        lunch = None
+        dinner = None
+        snack = None
+    context = {
+            "date":         today,      # Для начального значения календаря
+            "today":        today,      # Для минимального значения календаря
+            "day":          day,        # Данные по БЖУ и калориям за указанный день
+            "breakfast":    breakfast,  # Калории на завтрак
+            "lunch":        lunch,      # обед
+            "dinner":       dinner,     # ужин
+            "snack":        snack,      # перекус
+    }
+    return render(request, "report.html", context)
+
+@login_required(login_url="login")
+def report_another(request, days):
+    today = datetime.datetime.today().strftime("%Y-%m-%d")
+    if days == 0:
+        return redirect("report")
+    other_day = (datetime.datetime.today() + datetime.timedelta(days=days)).strftime("%Y-%m-%d")
+    try:
+        day = Day.objects.get(author=request.user, date=other_day)
+        breakfast   = day.breakfast.all().aggregate(Sum('calories'))['calories__sum']
+        lunch       = day.lunch.all().aggregate(Sum('calories'))['calories__sum']
+        dinner      = day.dinner.all().aggregate(Sum('calories'))['calories__sum']
+        snack       = day.snack.all().aggregate(Sum('calories'))['calories__sum']
+    except Day.DoesNotExist:
+        day = None
+        breakfast = None
+        lunch = None
+        dinner = None
+        snack = None
+    context = {
+        "date":         other_day,      # Начальная дата для календаря
+        "today":        today,          # Минимальное значение
+        "day":          day,
+        "breakfast":    breakfast,
+        "lunch":        lunch,
+        "dinner":       dinner,
+        "snack":        snack,
+    }
+    return render(request, "report.html", context)
