@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+    <link rel="stylesheet" href="{% static 'css/reminders.css' %}">
+    <script src="{% static 'js/reminders.js' %}" defer></script>
+    <section class="container align-center">
+    <a href="/create-reminder" class="btn btn-primary">Создать</a>
+    {% for reminder in reminders %}
+        <a class="reminder" href="/reminder/{{ reminder.id }}">
+            <div class="form-check form-switch header-reminder">
+                <input id_reminder="{{ reminder.id }}" class="form-check-input check-js" type="checkbox" id="flexSwitchCheckReverse" {% if reminder.checked %}checked{% endif %}>
+                <label class="form-check-label" for="flexSwitchCheckReverse">{{ reminder.text }}</label>
+            </div>
+        <div>{{ reminder.date }}</div>
+        </a>
+    {% endfor %}
+    </section>
+{% endblock %}

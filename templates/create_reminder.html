@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+    <link rel="stylesheet" href="{% static 'css/reminders.css' %}">
+    <script src="{% static 'js/reminders.js' %}" defer></script>
+    <form enctype="multipart/form-data" id="create_reminder" method="post" action="/create-reminder" class="container">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="TextInput" class="form-label">Text</label>
+            <input type="text" class="form-control" id="TextInput" name="Text"
+                   value="" required>
+        </div>
+        <div class="mb-3">
+            <label for="dateInput" class="form-label">date</label>
+            <input type="datetime-local" class="form-control" id="dateInput" name="date" value=""
+                   required>
+        </div>
+        <div class="card-footer">
+            <button type="submit" class="btn btn-primary" form="create_reminder" id="signInBtn">Создать</button>
+        </div>
+    </form>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+     <script src="{% static 'js/create_recipe.js' %}"></script>
+    <form enctype="multipart/form-data" id="change_weight" method="post" action="/photos/add" class="container">
+    {% csrf_token %}
+    <div class="mb-3">
+            <label for="imgInput" class="form-label">Avatar</label>
+            <input class="form-control" type="file" onchange="showPreview(this)" accept="image/*"
+                   name="photos" multiple>
+        </div>
+    <div class="card-footer">
+        <button type="submit" class="btn btn-warning">add</button>
+    </div>
+    </form>
+{% endblock %}

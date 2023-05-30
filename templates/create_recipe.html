@@ -1,0 +1,210 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/create_recipe.css' %}">
+<script src="{% static 'js/create_recipe.js' %}"></script>
+
+<div class="container">
+    <div class="card mx-auto">
+        {% if recipe and request.user == recipe.author %}
+          <div class="card-header">Edit recipe</div>
+        {% else %}
+          <div class="card-header">Create new recipe</div>
+        {% endif %}
+        <div class="card-body">
+            <form id="create_recipe" data-id="{{ recipe.id }}" method="post">
+                {% csrf_token %}
+                  <div class="mb-4">
+                    <div class="row g-2 text-center">
+                      <div class="col-sm">
+                        <input id="proteinsTotal" type="text" value="{% if recipe %} {{ recipe.total_proteins }} {% else %} 0.00 {% endif %}" class="form-control form-control-sm product-info" disabled>
+                        <label for="proteinsTotal" class="form-label">Total proteins</label>
+                      </div>
+                      <div class="col-sm">
+                        <input id="fatsTotal" type="text" value="{% if recipe %} {{ recipe.total_fats }} {% else %} 0.00 {% endif %}" class="form-control form-control-sm product-info" disabled>
+                        <label for="fatsTotal" class="form-label ">Total fats</label>
+                      </div>
+                      <div class="col-sm">
+                        <input id="carbohydratesTotal" type="text" value="{% if recipe %} {{ recipe.total_carbohydrates }} {% else %} 0.00 {% endif %}" class="form-control form-control-sm product-info" disabled>
+                        <label for="carbohydratesTotal" class="form-label">Total carbohydrates</label>
+                      </div>
+                      <div class="col-sm">
+                        <input id="caloriesTotal" type="text" value="{% if recipe %} {{ recipe.total_calories }} {% else %} 0.00 {% endif %}" class="form-control form-control-sm product-info" disabled>
+                        <label for="caloriesTotal" class="form-label ">Total calories</label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="mb-4">
+                    <label for="titleInput" class="form-label">Title</label>
+                    {% if recipe %}
+                      {% if recipe.author == request.user %}
+                        <input type="text" class="form-control" data-status="2" id="titleInput" value="{{ recipe.title }}" placeholder="e.g. Carbonara, Crab Cake or Chicken rice" name="title" required>
+                      {% else %}
+                        <input type="text" class="form-control" data-status="1" id="titleInput" value="Copy of {{ recipe.title }}" placeholder="e.g. Carbonara, Crab Cake or Chicken rice" name="title" required>
+                      {% endif %}
+                    {% else %}
+                      <input type="text" class="form-control" data-status="0" id="titleInput" placeholder="e.g. Carbonara, Crab Cake or Chicken rice" name="title" required>
+                    {% endif %}
+                  </div>
+                  <div class="mb-4">
+                    <label for="imgInput" class="form-label">Recipe image</label>
+                    <input class="form-control" type="file" onchange="showPreview(this)" id="imgInput" accept="image/*">
+                  </div>
+                  {% if recipe and recipe.author == request.user %}
+                  <div class="mb-4" id="previewContainer">
+                    <img src="{{ recipe.image.url }}" data-original="{% static 'images/no-photo.png' %}" class="rounded mx-auto d-block" id="previewImg" alt="No image">
+                  </div>
+                  {% else %}
+                  <div class="mb-4" id="previewContainer" hidden>
+                    <img src="{% static 'images/no-photo.png' %}" data-original="{% static 'images/no-photo.png' %}" class="rounded mx-auto d-block" id="previewImg" alt="No image">
+                  </div>
+                  {% endif %}
+                  <div class="mb-4">
+                      <div class="text-center">
+                        <a class="btn btn-outline-success collapse-btn" data-bs-toggle="collapse" href="#productsCollapsed" role="button" aria-expanded="false" aria-controls="productsCollapsed">
+                          Open products list &darr;
+                        </a>
+                      </div>
+                      <datalist id="datalistOptions">
+                        {% for pr in products %}
+                          <option data-proteins="{{ pr.proteins }}" data-fats="{{ pr.fats }}" data-carbohydrates="{{ pr.carbohydrates }}" data-calories="{{ pr.calories }}">
+                            {{ pr.name }}
+                          </option>
+                        {% endfor %}
+                      </datalist>
+          
+                      <div class="collapse" style="margin-top: 20px;" id="productsCollapsed">
+                      <div class="mb-3" id="productsContainer">
+                        {% if not recipe %}
+                        <div class="row g-3 mb-3 align-items-end" id="product_0">
+                          <div class="col-sm-7">
+                            <label for="exampleDataList" class="form-label">Product</label>
+                            <input class="form-control product-input" onchange="showInformation(this.parentElement.parentElement)" list="datalistOptions" id="exampleDataList" placeholder="Type to search..." required>
+                          </div>
+                          <div class="col-sm">
+                            <label for="amountInput" style="font-size: 17px;" class="form-label">Grams</label>
+                            <input name="amount" onchange="showInformation(this.parentElement.parentElement)" type="number" min="1" class="form-control amount-input" id="amountInput" placeholder="Amount" required>
+                          </div>
+                          <div class="col-sm text-center">
+                            <a class="btn btn-danger" onclick="removeProduct(this.parentElement.parentElement)" id="removeProductBtn">Remove</a>
+                          </div>
+                          <div class="row g-2 text-center">
+                            <div class="col-sm">
+                              <input id="proteins" type="text" value="0.00" class="form-control form-control-sm product-info" disabled>
+                              <label for="proteins" class="form-label">Proteins</label>
+                            </div>
+                            <div class="col-sm">
+                              <input id="fats" type="text" value="0.00" class="form-control form-control-sm product-info" disabled>
+                              <label for="fats" class="form-label ">Fats</label>
+                            </div>
+                            <div class="col-sm">
+                              <input id="carbohydrates" type="text" value="0.00" class="form-control form-control-sm product-info" disabled>
+                              <label for="carbohydrates" class="form-label ">Carbohydrates</label>
+                            </div>
+                            <div class="col-sm">
+                              <input id="calories" type="text" value="0.00" class="form-control form-control-sm product-info" disabled>
+                              <label for="calories" class="form-label ">Calories</label>
+                            </div>
+                          </div>
+                          <hr/>
+                        </div>
+                        {% else %}
+                        {% for amount, prod in local_products %}
+                        <div class="row g-3 mb-3 align-items-end" >
+                          <div class="col-sm-7">
+                            <label for="exampleDataList" class="form-label">Product</label>
+                            <input class="form-control product-input" value="{{ prod.name }}" onchange="showInformation(this.parentElement.parentElement)" list="datalistOptions" id="exampleDataList" placeholder="Type to search..." required>
+                          </div>
+                          <div class="col-sm">
+                            <label for="amountInput" style="font-size: 17px;" class="form-label">Grams</label>
+                            <input name="amount" onchange="showInformation(this.parentElement.parentElement)" type="number" min="1" value="{{ amount }}" class="form-control amount-input" id="amountInput" placeholder="Amount" required>
+                          </div>
+                          <div class="col-sm text-center">
+                            <a class="btn btn-danger" onclick="removeProduct(this.parentElement.parentElement)" id="removeProductBtn">Remove</a>
+                          </div>
+                          <div class="row g-2 text-center">
+                            <div class="col-sm">
+                              <input id="proteins" type="text" value="{{ prod.proteins }}" class="form-control form-control-sm product-info" disabled>
+                              <label for="proteins" class="form-label">Proteins</label>
+                            </div>
+                            <div class="col-sm">
+                              <input id="fats" type="text" value="{{ prod.fats }}" class="form-control form-control-sm product-info" disabled>
+                              <label for="fats" class="form-label ">Fats</label>
+                            </div>
+                            <div class="col-sm">
+                              <input id="carbohydrates" type="text" value="{{ prod.carbohydrates }}" class="form-control form-control-sm product-info" disabled>
+                              <label for="carbohydrates" class="form-label ">Carbohydrates</label>
+                            </div>
+                            <div class="col-sm">
+                              <input id="calories" type="text" value="{{ prod.calories }}" class="form-control form-control-sm product-info" disabled>
+                              <label for="calories" class="form-label ">Calories</label>
+                            </div>
+                          </div>
+                          <hr/>
+                        </div>
+                        {% endfor %}
+                        {% endif %}
+                      </div>                
+                      <a class="btn btn-success" id="addProductBtn" onclick="addProduct()">Add product</a>
+                    </div>
+                  </div>
+                  <div class="mb-4">                  
+                    <div class="text-center">
+                      <a class="btn btn-outline-success collapse-btn" data-bs-toggle="collapse" href="#stepsCollapsed" role="button" aria-expanded="false" aria-controls="stepsCollapsed">
+                        Steps list &darr;
+                      </a>
+                    </div>
+                    <div class="collapse" style="margin-top: 20px;" id="stepsCollapsed">
+                      <div class="mb-3" id="stepsContainer">
+                        {% if not recipe %}
+                        <div class="row g-3" id="step_0">
+                        <div class="mb-1">
+                          <label for="stepTitle" class="form-label step-title">Step 1</label>
+                          <input type="text" class="form-control step-input" id="stepTitle" placeholder="e.g. Spread butter on bread" required>
+                        </div>
+                        <div class="mb-1">
+                          <label for="stepDescription" class="form-label">Detailed description</label>
+                          <textarea class="form-control description-input" id="stepDescription" rows="3"></textarea>
+                        </div>
+                        <div class="mb-1">
+                          <a class="btn btn-danger" onclick="removeStep(this.parentElement.parentElement)" id="removeStepBtn">Remove</a>
+                        </div>
+                        <hr/>
+                      </div>
+                      {% else %}
+                      {% for step in recipe.steps.all %}
+                      <div class="row g-3">
+                        <div class="mb-1">
+                          <label for="stepTitle" class="form-label step-title"></label>
+                          <input type="text" value="{{ step.step }}" class="form-control step-input" id="stepTitle" placeholder="e.g. Spread butter on bread" required>
+                        </div>
+                        <div class="mb-1">
+                          <label for="stepDescription" class="form-label">Detailed description</label>
+                          <textarea class="form-control description-input" id="stepDescription" rows="3">{{ step.description }}</textarea>
+                        </div>
+                        <div class="mb-1">
+                          <a class="btn btn-danger" onclick="removeStep(this.parentElement.parentElement)" id="removeStepBtn">Remove</a>
+                        </div>
+                        <hr/>
+                      </div>
+                      {% endfor %}
+                      {% endif %}
+                    </div>
+                    <a class="btn btn-success" id="addStepBtn" onclick="addStep()">Add step</a>
+                  </div>
+            </form>
+        </div>
+        <div class="card-footer">
+          {% if recipe and request.user == recipe.author %}
+            <button type="button" class="btn btn-primary" form="create_recipe" id="doneBtn">Save changes</button>
+          {% else %}
+            <button type="button" class="btn btn-primary" form="create_recipe" id="doneBtn">Create</button>
+          {% endif %}
+        </div>
+      </div>
+      <div class="alert alert-danger mx-auto" role="alert" id="error" hidden></div>
+</div>
+
+
+{% endblock content %}

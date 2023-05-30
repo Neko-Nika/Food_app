@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/recipes.css' %}">
+<script src="{% static 'js/recipes.js' %}"></script>
+
+<div class="container">
+    
+    <div class="upper">
+        <div class="input-group mb-3 search">
+            <input type="text" oninput="filterRecipes(this)" id="inputSearch" class="form-control" placeholder="Enter recipe name" aria-label="" aria-describedby="button-addon2">
+            <button class="btn btn-outline-success" type="button" id="button-addon2">Search</button>
+        </div>
+        
+        <a href="{% url 'create_recipe' %}" style="display: inline-block;" class="btn btn-primary add-btn">Add new recipe</a>
+        {% if request.user.is_authenticated %}
+        <div class="form-check" style="display: inline-block;">
+          <input class="form-check-input" data-user="{{ request.user.username }}" onclick="showMyRecipes(this)" type="checkbox" value="" id="OnlyMyRecipesCheck">
+          <label class="form-check-label" for="OnlyMyRecipesCheck">Only my recipes</label>
+        </div>
+        {% endif %}
+
+    </div>
+
+    <div class="main">
+        <div class="row row-cols-1 row-cols-md-4 g-4">
+            {% for recipe in recipes %}
+            <div class="col">
+              <div class="card h-100" onclick="goToRecipe(this)" data-id="{{ recipe.id }}">
+                <div class="card-header text-muted">
+                  <img src="{{ recipe.image.url }}" class="card-img-top recipe-image" alt="Recipe image">
+                </div>
+                <div class="card-body">
+                  {% if request.user in recipe.liked.all %}
+                  <p style="font-size: 18px;">{{ recipe.likes }} <i class="fa-solid fa-heart"></i></p>
+                  {% else %}
+                  <p style="font-size: 18px;">{{ recipe.likes }} <i class="fa-regular fa-heart"></i></p>
+                  {% endif %}
+                  <h5 class="card-title">{{ recipe.title }}</h5>
+                </div>
+                <div class="card-footer text-muted">
+                  <p class="card-text">@{{ recipe.author.username }}</p>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+    </div>
+
+</div>
+
+
+{% endblock content %}

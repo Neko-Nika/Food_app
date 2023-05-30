@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+    <a href="/photos/add" class="btn btn-warning">добавить</a><br>
+    {% for photo in photos %}
+        <form action="/photos/delete/{{ photo.id }}" method="post" style="display: inline-block; width: 300px; margin-bottom: 30px;">
+            {% csrf_token %}
+            <button type="submit" style="width: 100%" class="btn btn-warning mb-1">Удалить</button>
+            <br>
+            <img src="{{ photo.photo.url }}" style="width: 300px;">
+        </form>
+    {% endfor %}
+{% endblock %}

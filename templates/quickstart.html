@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/quickstart.css' %}">
+
+<div class="container">
+    <div class="card mb-5  border-1 rounded">
+        <div class="row g-0" style="height: 100%">
+            <div class="col-md-4  d-flex align-items-center card-image" >
+                <img src="{% static 'images/onboarding_1.svg' %}" class="img-fluid" alt="...">
+            </div>
+            <div class="col-md-8 d-flex align-items-center">
+                <div class="card-body">
+                    <h5 class="card-title">Healthy eating is the key to a long life!</h5>
+                    <p class="card-text">Monitor your diet with our app.</p>
+                    <a href="/login" class="btn btn-primary">Start now</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-5  border-1 rounded">
+        <div class="row g-0" style="height: 100%">
+          <div class="col-md-8 d-flex align-items-center">
+            <div class="card-body">
+              <h5 class="card-title">Plan your diet, sleep and workouts.</h5>
+              <p class="card-text">Add your meals, the amount of water you drink, and monitor your sleep and exercises.</p>
+            </div>
+          </div>
+          <div class="col-md-4  d-flex align-items-center card-image">
+            <img src="{% static 'images/onboarding_2.svg' %}" class="img-fluid" alt="...">
+          </div>
+        </div>
+    </div>
+
+    <div class="card mb-5  border-1 rounded">
+        <div class="row g-0" style="height: 100%">
+          <div class="col-md-4  d-flex align-items-center card-image">
+            <img src="{% static 'images/onboarding_3.svg' %}" class="img-fluid" alt="...">
+          </div>
+          <div class="col-md-8 d-flex align-items-center">
+            <div class="card-body">
+              <h5 class="card-title">Your health is in your hands.</h5>
+              <p class="card-text">Customize your own dishes and share them with others.</p>
+            </div>
+          </div>
+        </div>
+    </div>
+
+</div>
+
+
+{% endblock content %}
