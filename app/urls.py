@@ -25,6 +25,15 @@ urlpatterns = [
     path("reminder/<int:id>", views.reminder, name="reminder"),
     path("create-reminder", views.create_reminder, name="create-reminder"),
 
+    path("photos", views.photos, name="photos"),
+    path("photos/add", views.photos_add, name="photos_add"),
+    path("photos/delete/<int:id>", views.photos_delete, name="photos_delete"),
+
+    path("support", views.support, name="support"),
+    path("support-success", views.support_success, name="support_success"),
+
+    path('contacts', views.contacts, name='contacts'),
+
     # Отчеты
     path("report", views.report, name="report"),
     path("report/<int:days>", views.report_another, name="report_another")

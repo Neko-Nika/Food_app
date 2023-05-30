@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+    <section class="text-center">
+    <h2>Тикет в техподдержку</h2>
+        <div style="width: 50%; display: inline-block;">
+            <textarea class="w-100" style="min-height: 100px" placeholder="Напиши в техподдержку..."></textarea><br>
+            <a href="/support-success" class="btn btn-warning">Отправить</a>
+        </div>
+    </section>
+{% endblock %}

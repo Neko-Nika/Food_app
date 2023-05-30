@@ -83,3 +83,17 @@ class Reminders(models.Model):
     date = models.DateTimeField()
     text = models.CharField(max_length=255)
     checked = models.BooleanField(default=True)
+
+class Photos(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    photo = models.ImageField(upload_to='photos')
+
+    def save(self, *args, **kwargs):
+        super(Photos, self).save(*args, **kwargs)
+
+        img = Image.open(self.photo.path)
+
+        if img.height > 900 or img.width > 900:
+            output_size = (900, 900)
+            img.thumbnail(output_size)
+            img.save(self.photo.path)
