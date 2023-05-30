@@ -14,14 +14,19 @@ urlpatterns = [
     path("create_recipe", views.create_recipe, name="create_recipe"),
     path("create_recipe/<int:id>", views.edit_recipe, name="edit_recipe"),
     path("recipe/<int:id>", views.recipe, name="recipe"),
-
-    path("diary", views.diary, name="diary"),
-    path("diary/<int:days>", views.diary_another, name="diary_another"),
-    path("recipe/<int:id>", views.recipe, name="recipe"),
     path("profile", views.profile, name="profile"),
     path("change-profile", views.change_profile, name="change-profile"),
     path("change-weight", views.change_weight, name="change-weight"),
     path("reminders", views.reminders, name="reminders"),
     path("reminder/<int:id>", views.reminder, name="reminder"),
     path("create-reminder", views.create_reminder, name="create-reminder"),
+
+    path("photos", views.photos, name="photos"),
+    path("photos/add", views.photos_add, name="photos_add"),
+    path("photos/delete/<int:id>", views.photos_delete, name="photos_delete"),
+
+    path("support", views.support, name="support"),
+    path("support-success", views.support_success, name="support_success"),
+
+    path('contacts', views.contacts, name='contacts'),
 ]

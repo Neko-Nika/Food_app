@@ -23,12 +23,11 @@
       <ul class="center">
         {% if request.user.is_authenticated %}
         <li><a class="navbar-option" href="/recipes">Recipes</a></li>
-        <li><a class="navbar-option" href="/diary">My diary</a></li>
-        <li><a class="navbar-option" href="#">Contact us</a></li>
+        <li><a class="navbar-option" href="/contacts">Contact us</a></li>
         {% else %}
         <li><a class="navbar-option" href="/quickstart">Quick start</a></li>
         <li><a class="navbar-option" href="/recipes">Recipes</a></li>
-        <li><a class="navbar-option" href="#">Contact us</a></li>
+        <li><a class="navbar-option" href="/contacts">Contact us</a></li>
         {% endif %}
       </ul>
       <div class="right">
