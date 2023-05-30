@@ -13,7 +13,7 @@ SECRET_KEY = "django-insecure-s1ufi4(_b*0jy&kj5c#62%a1klfs2tlwsk+rb%$#i*_hvohq*7
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['95.140.146.166', '127.0.0.1']
 
 # Application definition
 
@@ -64,12 +64,8 @@ WSGI_APPLICATION = "food_app.wsgi.application"
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'FitAndFoodDB',
-        'USER' : 'FitAndFoodUser',
-        'PASSWORD' : 'Qwerty2312',
-        'HOST' : '127.0.0.1',
-        'PORT' : '5432',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
