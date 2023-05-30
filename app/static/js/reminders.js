@@ -14,13 +14,14 @@ function getCookie(name) {
     return cookieValue;
 }
 
-
+//получаем все чекбоксы на странице
 let allInput = document.querySelectorAll(`.check-js`)
 
 allInput.forEach((input) => {
+    //каждому чекбоксу вешаем лисенер на переключение
     input.addEventListener(`input`, (e) => {
-        console.log(e.target.attributes.id_reminder.value)
-
+        // console.log(e.target.attributes.id_reminder.value)
+        //отправляем запрос на сервер для того что бы поменять значение в бд(как строится запрос, думаю понятно и в объяснении не нуждается, все есть в офф доках jquery
         $.ajax({
             url: '/reminders',
             type: 'PUT',
@@ -41,6 +42,7 @@ allInput.forEach((input) => {
 })
 
 document.querySelector(`#qwertyuiopqwerty`).addEventListener(`click`, (e)=>{
+            //запрос на удаление напоминания при клике на кнопку удаления(да, id у этой кнопки интересный и суперуникальный))))
             $.ajax({
             url: `/reminder/${e.target.attributes.id_reminder.value}`,
             type: 'DELETE',

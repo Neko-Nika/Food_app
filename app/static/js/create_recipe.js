@@ -16,10 +16,6 @@ window.onload = () => {
         steps.children[i].getElementsByClassName("step-title")[0].innerHTML = "Step " + (i + 1)
         steps.children[i].id = "step_" + i
     }
-
-    const status = parseInt(document.getElementById("titleInput").getAttribute("data-status"))
-    if (status > 0)
-        setupParameters()
 }
 
 function removeProduct(element) {
@@ -31,21 +27,6 @@ function removeProduct(element) {
         element.remove()
     }
     updateTotal()
-}
-
-function setupParameters() {
-    var products = document.getElementById("productsContainer").children
-
-    for (let i = 0; i < products.length; i++) {
-        var amount = parseInt(products[i].getElementsByClassName("amount-input")[0].value)
-        var info = products[i].getElementsByClassName("product-info")
-
-        info[0].value = (parseFloat(info[0].value.replace(',', '.')) / 100 * amount).toFixed(2)
-        info[1].value = (parseFloat(info[1].value.replace(',', '.')) / 100 * amount).toFixed(2)
-        info[2].value = (parseFloat(info[2].value.replace(',', '.')) / 100 * amount).toFixed(2)
-        info[3].value = Math.round(parseInt(info[3].value.replace(',', '.')) / 100 * amount)
-    }
-   
 }
 
 function showInformation(element) {
@@ -61,17 +42,12 @@ function showInformation(element) {
         info[3].value = 0.0
     }
 
-    if (!amount) {
-        element.getElementsByClassName("amount-input")[0].value = 100
-        amount = 100
-    }
-
     for (i = 0; i < list.options.length; i++) {
         if (list.options[i].value === value) {
-            info[0].value = (parseFloat(list.options[i].getAttribute("data-proteins").replace(',', '.')) / 100 * amount).toFixed(2)
-            info[1].value = (parseFloat(list.options[i].getAttribute("data-fats").replace(',', '.')) / 100 * amount).toFixed(2)
-            info[2].value = (parseFloat(list.options[i].getAttribute("data-carbohydrates").replace(',', '.')) / 100 * amount).toFixed(2)
-            info[3].value = Math.round(parseInt(list.options[i].getAttribute("data-calories").replace(',', '.')) / 100 * amount)
+            info[0].value = (parseFloat(list.options[i].getAttribute("data-proteins").replace(',', '.')) * amount).toFixed(2)
+            info[1].value = (parseFloat(list.options[i].getAttribute("data-fats").replace(',', '.')) * amount).toFixed(2)
+            info[2].value = (parseFloat(list.options[i].getAttribute("data-carbohydrates").replace(',', '.'))* amount).toFixed(2)
+            info[3].value = parseFloat(list.options[i].getAttribute("data-calories").replace(',', '.')) * amount
         }
     }
     
@@ -88,7 +64,7 @@ function addProduct() {
 function clearInputs(element) {
     tags = element.getElementsByTagName("input")
     tags[0].value = ""
-    tags[1].value = ""
+    tags[1].value = "1"
     for (var i = 2; i < tags.length; i++) {
         tags[i].value = "0.00"
     }
@@ -111,7 +87,7 @@ function updateTotal() {
         if (elements[2].value != "")
             carbohydrates += parseFloat(elements[2].value)
         if (elements[3].value != "")
-            calories += parseInt(elements[3].value)
+            calories += parseFloat(elements[3].value)
     }
 
     document.getElementById("proteinsTotal").value = proteins.toFixed(2)
